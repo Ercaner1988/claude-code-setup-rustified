@@ -3,7 +3,9 @@ name = "claude-code-setup"
 version = "0.1.0"
 edition = "2021"
 authors = ["Ercan ER <ercaner1988@gmail.com>", "Kassam <agent@hermes.local>"]
-description = "Rust port of Claude Code Complete Setup & Diagnostics CLI"
+description = "Bagimsiz Rust CLI: Claude Code ortam denetimi, dinamik MCP yonetimi, semantik + graf hafiza motoru"
+license = "MIT"
+repository = "https://github.com/Ercaner1988/claude-code-setup-rustified"
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
