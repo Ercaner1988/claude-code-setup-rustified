@@ -6,7 +6,6 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
-
 pub fn get_home_dir(override_path: Option<String>) -> Result<PathBuf> {
     if let Some(path) = override_path {
         Ok(PathBuf::from(path))

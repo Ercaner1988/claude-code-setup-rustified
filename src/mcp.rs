@@ -339,8 +339,7 @@ mod tests {
         assert!(result.is_err());
 
         // Sunucu hâlâ yerinde olmalı
-        let val: Value =
-            serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
+        let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
         assert!(val["mcpServers"]["my_srv"].is_object());
     }
 
@@ -360,8 +359,7 @@ mod tests {
         mcp_unset("my_srv", vec![], false, true, home_override.clone()).unwrap();
 
         // Sunucu silinmiş olmalı
-        let val: Value =
-            serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
+        let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
         assert!(val["mcpServers"]["my_srv"].is_null());
 
         // .bak oluşmuş olmalı

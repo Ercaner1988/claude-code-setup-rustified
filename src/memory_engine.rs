@@ -133,11 +133,7 @@ pub struct SearchResult {
 }
 
 fn render_results(results: &[SearchResult], mode_label: &str, query: &str) {
-    println!(
-        "{} for '{}'",
-        mode_label.cyan().bold(),
-        query.yellow()
-    );
+    println!("{} for '{}'", mode_label.cyan().bold(), query.yellow());
     println!("========================================");
     for r in results {
         println!(
@@ -382,7 +378,11 @@ pub fn search_memory(
         _ => {
             // A1: Gerçek hybrid — RRF (k=60)
             let results = search_hybrid_rrf(&conn, query, limit, min_score)?;
-            render_results(&results, "Memory Hybrid Search (RRF: FTS5 + Semantic)", query);
+            render_results(
+                &results,
+                "Memory Hybrid Search (RRF: FTS5 + Semantic)",
+                query,
+            );
         }
     }
     Ok(())
@@ -441,8 +441,7 @@ fn search_semantic_vec(
 
     let query_emb = model.embed(vec![query.to_string()], None)?[0].clone();
 
-    let mut stmt =
-        conn.prepare("SELECT filename, title, embedding FROM knowledge_notes")?;
+    let mut stmt = conn.prepare("SELECT filename, title, embedding FROM knowledge_notes")?;
     let mut results: Vec<SearchResult> = Vec::new();
 
     let rows = stmt.query_map([], |row| {
@@ -469,7 +468,11 @@ fn search_semantic_vec(
         }
     }
 
-    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    results.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     results.truncate(limit);
 
     Ok(results)
@@ -521,7 +524,11 @@ fn search_hybrid_rrf(
         })
         .collect();
 
-    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    results.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     results.truncate(limit);
 
     Ok(results)
@@ -650,10 +657,7 @@ mod tests {
     // Mean-pool testi
     #[test]
     fn test_mean_pool_embeddings() {
-        let embs = vec![
-            vec![1.0, 2.0, 3.0],
-            vec![3.0, 4.0, 5.0],
-        ];
+        let embs = vec![vec![1.0, 2.0, 3.0], vec![3.0, 4.0, 5.0]];
         let mean = mean_pool_embeddings(&embs);
         assert_eq!(mean.len(), 3);
         assert!((mean[0] - 2.0).abs() < 1e-5);

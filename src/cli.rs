@@ -92,7 +92,11 @@ pub enum Commands {
         home_dir: Option<String>,
 
         /// Semantic edge threshold (default: 0.70)
-        #[arg(long, default_value_t = 0.70, help = "Cosine similarity threshold for semantic edges")]
+        #[arg(
+            long,
+            default_value_t = 0.70,
+            help = "Cosine similarity threshold for semantic edges"
+        )]
         edge_threshold: f32,
 
         /// Source directory to index (repeatable). Defaults to <home>/claude_global_memory/knowledge
