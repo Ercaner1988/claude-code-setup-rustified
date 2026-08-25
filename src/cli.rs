@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "claude-code-setup")]
-#[command(about = "Rust-optimized setup, update and diagnostic CLI for Claude Code Complete Setup", long_about = None)]
+#[command(about = "Bagimsiz Rust CLI: Claude Code ortam kurulumu, dinamik MCP yonetimi, semantik + graf hafiza motoru", long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -10,17 +10,11 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Perform full automated setup and configuration deployment
+    /// Verify prerequisites and set up the .env.claude environment file
     Install {
         #[arg(short, long, help = "Skip prerequisite installation checks")]
         skip_prereqs: bool,
 
-        #[arg(long, help = "Custom home directory override")]
-        home_dir: Option<String>,
-    },
-
-    /// Update existing configuration and MCP servers
-    Update {
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },

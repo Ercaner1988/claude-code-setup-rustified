@@ -1,13 +1,11 @@
 use anyhow::{Context, Result};
 use chrono::Local;
 use colored::*;
-use fs_extra::dir::{copy, CopyOptions};
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
-use crate::mcp;
 
 pub fn get_home_dir(override_path: Option<String>) -> Result<PathBuf> {
     if let Some(path) = override_path {
@@ -43,7 +41,6 @@ pub fn run_install(skip_prereqs: bool, home_override: Option<String>) -> Result<
 
     let home = get_home_dir(home_override)?;
     let current_dir = env::current_dir().context("Failed to get current working directory")?;
-    let timestamp = Local::now().format("%Y%m%d_%H%M%S").to_string();
 
     if !skip_prereqs {
         log_info("Checking prerequisites...");
@@ -72,74 +69,14 @@ pub fn run_install(skip_prereqs: bool, home_override: Option<String>) -> Result<
         }
     }
 
-    log_info("Backing up existing configurations...");
-    let claude_dir = home.join(".claude");
-    let config_dir = home.join(".config").join("claude-code");
-    let memory_dir = home.join("claude_global_memory");
+    // NOT: Bu komut eskiden repo icindeki `config/` ve `global_memory/` iceriklerini
+    // kullanicinin ~/.claude, ~/.config/claude-code ve ~/claude_global_memory dizinlerine
+    // KOPYALIYORDU. O icerik ust-projeden (baska bir makinenin kisisel yapilandirmasi)
+    // miras kalmisti ve kullanicinin kendi ~/.claude/CLAUDE.md dosyasini eziyordu.
+    // Bagimsiz catal ile birlikte o icerik depodan cikarildi; kopyalama da kaldirildi.
+    // Artik `install` yalnizca on-kosullari dogrular ve .env kurulumunu yapar.
 
-    if claude_dir.exists() {
-        let backup_path = home.join(format!(".claude.backup.{}", timestamp));
-        let mut options = CopyOptions::new();
-        options.copy_inside = true;
-        let _ = copy(&claude_dir, &backup_path, &options);
-        log_warning(&format!("Backed up .claude to {:?}", backup_path));
-    }
-
-    if config_dir.exists() {
-        let backup_path = home.join(format!(".config.claude-code.backup.{}", timestamp));
-        let mut options = CopyOptions::new();
-        options.copy_inside = true;
-        let _ = copy(&config_dir, &backup_path, &options);
-        log_warning(&format!(
-            "Backed up claude-code config to {:?}",
-            backup_path
-        ));
-    }
-
-    if memory_dir.exists() {
-        let backup_path = home.join(format!("claude_global_memory.backup.{}", timestamp));
-        let mut options = CopyOptions::new();
-        options.copy_inside = true;
-        let _ = copy(&memory_dir, &backup_path, &options);
-        log_warning(&format!("Backed up global memory to {:?}", backup_path));
-    }
-
-    log_info("Copying configurations & normalizing MCP paths...");
-    fs::create_dir_all(&claude_dir)?;
-    fs::create_dir_all(&config_dir)?;
-    fs::create_dir_all(&memory_dir)?;
-
-    let src_claude_cfg = current_dir.join("config").join("claude");
-    if src_claude_cfg.exists() {
-        let mut options = CopyOptions::new();
-        options.overwrite = true;
-        options.content_only = true;
-        let _ = copy(&src_claude_cfg, &claude_dir, &options);
-        log_success("Copied SuperClaude framework");
-    }
-
-    let src_mcp_file = current_dir
-        .join("config")
-        .join("claude-code")
-        .join("claude_desktop_config.json");
-    let dst_mcp_file = config_dir.join("claude_desktop_config.json");
-    if src_mcp_file.exists() {
-        let raw = fs::read_to_string(&src_mcp_file)?;
-        let normalized = mcp::normalize_mcp_config(&raw, &home)?;
-        fs::write(&dst_mcp_file, normalized)?;
-        log_success("Copied and normalized MCP server configurations");
-    }
-
-    let src_memory = current_dir.join("global_memory");
-    if src_memory.exists() {
-        let mut options = CopyOptions::new();
-        options.overwrite = true;
-        options.content_only = true;
-        let _ = copy(&src_memory, &memory_dir, &options);
-        log_success("Copied global memory system");
-    }
-
-    log_info("Setting secure file permissions...");
+    log_info("Setting up environment file...");
 
     let env_src = current_dir.join(".env");
     let env_dst = home.join(".env.claude");

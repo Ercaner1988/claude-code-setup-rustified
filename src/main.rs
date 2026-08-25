@@ -6,7 +6,6 @@ mod mcp;
 mod memory_engine;
 mod security;
 mod tester;
-mod updater;
 
 use anyhow::Result;
 use clap::Parser;
@@ -21,9 +20,6 @@ fn main() -> Result<()> {
             home_dir,
         } => {
             installer::run_install(skip_prereqs, home_dir)?;
-        }
-        Commands::Update { home_dir } => {
-            updater::run_update(home_dir)?;
         }
         Commands::Test { home_dir } => {
             tester::run_tests(home_dir)?;

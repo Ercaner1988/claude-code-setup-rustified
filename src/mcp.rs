@@ -57,41 +57,6 @@ fn save_json_value_atomically(path: &Path, val: &Value) -> Result<()> {
     Ok(())
 }
 
-pub fn normalize_mcp_config(raw_json: &str, target_home: &Path) -> Result<String> {
-    let home_str = target_home.to_string_lossy().replace('\\', "/");
-    let mut val: Value = serde_json::from_str(raw_json)?;
-
-    if let Some(servers) = val.get_mut("mcpServers").and_then(|s| s.as_object_mut()) {
-        for (_name, server) in servers.iter_mut() {
-            // env içindeki yollar
-            if let Some(env_obj) = server.get_mut("env").and_then(|e| e.as_object_mut()) {
-                for (_k, v) in env_obj.iter_mut() {
-                    if let Some(s) = v.as_str() {
-                        if s.contains("/home/jb_remus") {
-                            let new_s = s.replace("/home/jb_remus", &home_str);
-                            *v = Value::String(new_s);
-                        }
-                    }
-                }
-            }
-
-            // args içindeki yollar
-            if let Some(args_arr) = server.get_mut("args").and_then(|a| a.as_array_mut()) {
-                for v in args_arr.iter_mut() {
-                    if let Some(s) = v.as_str() {
-                        if s.contains("/home/jb_remus") {
-                            let new_s = s.replace("/home/jb_remus", &home_str);
-                            *v = Value::String(new_s);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    Ok(serde_json::to_string_pretty(&val)?)
-}
-
 pub fn list_mcp_servers(home_override: Option<String>) -> Result<()> {
     let path = resolve_config_path(home_override)?;
     if !path.exists() {
