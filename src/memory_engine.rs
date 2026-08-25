@@ -75,7 +75,11 @@ fn chunk_content(content: &str, chunk_size: usize) -> Vec<String> {
     let mut chunks = Vec::new();
     let mut start = 0;
     while start < content.len() {
-        let end = std::cmp::min(start + chunk_size, content.len());
+        let mut end = std::cmp::min(start + chunk_size, content.len());
+        // UTF-8 karakter sınırına hizala — Türkçe/çok baytlı metinde panik olmasın
+        while end < content.len() && !content.is_char_boundary(end) {
+            end += 1;
+        }
         // Satır sınırında kes
         let actual_end = if end < content.len() {
             content[start..end]
@@ -191,16 +195,24 @@ pub fn init_db(conn: &Connection) -> Result<()> {
 pub fn index_memory(
     home_override: Option<String>,
     edge_threshold: f32,
+    sources: Vec<String>,
 ) -> Result<()> {
     let home = get_home_dir(home_override.clone())?;
     let db_path = get_db_path(home_override)?;
-    let knowledge_dir = home.join("claude_global_memory").join("knowledge");
 
-    if !knowledge_dir.exists() {
+    // --source verilmezse eski davranis korunur: <home>/claude_global_memory/knowledge
+    let knowledge_dirs: Vec<PathBuf> = if sources.is_empty() {
+        vec![home.join("claude_global_memory").join("knowledge")]
+    } else {
+        sources.iter().map(PathBuf::from).collect()
+    };
+
+    let existing_dirs: Vec<&PathBuf> = knowledge_dirs.iter().filter(|d| d.exists()).collect();
+    if existing_dirs.is_empty() {
         println!(
-            "{} Memory directory missing, skipping index: {:?}",
+            "{} No source directory found, skipping index: {:?}",
             "⚠".yellow(),
-            knowledge_dir
+            knowledge_dirs
         );
         return Ok(());
     }
@@ -215,19 +227,32 @@ pub fn index_memory(
     conn.execute("DELETE FROM note_edges", [])?;
 
     let mut files_data = Vec::new();
-    for entry in fs::read_dir(&knowledge_dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("md") {
-            let filename = path.file_name().unwrap().to_string_lossy().to_string();
-            let content = fs::read_to_string(&path)?;
-            let title = content
-                .lines()
-                .find(|l| l.starts_with("# "))
-                .map(|l| l.trim_start_matches("# ").to_string())
-                .unwrap_or_else(|| filename.clone());
+    let mut seen_names: HashSet<String> = HashSet::new();
+    for dir in &existing_dirs {
+        for entry in fs::read_dir(dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("md") {
+                let filename = path.file_name().unwrap().to_string_lossy().to_string();
+                // filename wikilink hedefi olarak kullaniliyor -> benzersiz olmak zorunda
+                if !seen_names.insert(filename.clone()) {
+                    println!(
+                        "{} Duplicate filename skipped: {} (in {:?})",
+                        "⚠".yellow(),
+                        filename,
+                        dir
+                    );
+                    continue;
+                }
+                let content = fs::read_to_string(&path)?;
+                let title = content
+                    .lines()
+                    .find(|l| l.starts_with("# "))
+                    .map(|l| l.trim_start_matches("# ").to_string())
+                    .unwrap_or_else(|| filename.clone());
 
-            files_data.push((filename, title, content));
+                files_data.push((filename, title, content));
+            }
         }
     }
 
@@ -241,10 +266,10 @@ pub fn index_memory(
 
     println!(
         "{}",
-        "Generating embeddings via FastEmbed (BGE-Small)...".blue()
+        "Generating embeddings via FastEmbed (Multilingual-E5-Small)...".blue()
     );
     let model = TextEmbedding::try_new(
-        InitOptions::new(EmbeddingModel::BGESmallENV15).with_show_download_progress(true),
+        InitOptions::new(EmbeddingModel::MultilingualE5Small).with_show_download_progress(true),
     )?;
 
     // B1: Chunking + mean-pool — ~1500 karakter pencereler
@@ -411,7 +436,7 @@ fn search_semantic_vec(
     min_score: f64,
 ) -> Result<Vec<SearchResult>> {
     let model = TextEmbedding::try_new(
-        InitOptions::new(EmbeddingModel::BGESmallENV15).with_show_download_progress(false),
+        InitOptions::new(EmbeddingModel::MultilingualE5Small).with_show_download_progress(false),
     )?;
 
     let query_emb = model.embed(vec![query.to_string()], None)?[0].clone();
@@ -456,7 +481,7 @@ fn search_hybrid_rrf(
     conn: &Connection,
     query: &str,
     limit: usize,
-    min_score: f64,
+    _min_score: f64,
 ) -> Result<Vec<SearchResult>> {
     let k = 60.0;
 
@@ -483,9 +508,12 @@ fn search_hybrid_rrf(
         entry.0 += rrf;
     }
 
+    // min_score bir KOSİNÜS eşiğidir (0..1); RRF puanları ~1/(k+rank) ölçeğindedir
+    // (~0.016). Füzyon puanına kosinüs eşiği uygulamak her sonucu eler — hybrid
+    // (varsayılan kip) her zaman boş dönerdi. Eşik semantik kipe aittir; kanallar
+    // buraya zaten 0.0 ile (geniş havuz) çağrılıyor.
     let mut results: Vec<SearchResult> = rrf_scores
         .into_iter()
-        .filter(|(_, (score, _))| *score >= min_score || min_score <= 0.0)
         .map(|(filename, (score, title))| SearchResult {
             filename,
             title,
@@ -652,5 +680,17 @@ mod tests {
         // Tüm chunk'lar birleşince orijinale eşit
         let rejoined: String = chunks.concat();
         assert_eq!(rejoined, content);
+    }
+
+    #[test]
+    fn test_chunk_content_utf8_no_panic() {
+        // Regresyon: bayt-dilimleme Türkçe karakterin ortasında panikliyordu.
+        // Satır sonu YOK ki rfind('\n') devreye girmesin, kesim tam çok baytlı
+        // karakterin üstüne denk gelsin.
+        let content: String = "çşğüöıÇŞĞÜÖİ".repeat(400);
+        let chunks = chunk_content(&content, 1500);
+        assert!(chunks.len() >= 2);
+        let rejoined: String = chunks.concat();
+        assert_eq!(rejoined, content, "chunk'lar orijinali kayıpsız vermeli");
     }
 }

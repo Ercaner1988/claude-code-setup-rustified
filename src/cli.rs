@@ -100,6 +100,13 @@ pub enum Commands {
         /// Semantic edge threshold (default: 0.70)
         #[arg(long, default_value_t = 0.70, help = "Cosine similarity threshold for semantic edges")]
         edge_threshold: f32,
+
+        /// Source directory to index (repeatable). Defaults to <home>/claude_global_memory/knowledge
+        #[arg(
+            long,
+            help = "Directory of .md notes to index; repeat for multiple sources"
+        )]
+        source: Vec<String>,
     },
 
     /// Search indexed global memory notes

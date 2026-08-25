@@ -58,8 +58,9 @@ fn main() -> Result<()> {
         Commands::MemoryIndex {
             home_dir,
             edge_threshold,
+            source,
         } => {
-            memory_engine::index_memory(home_dir, edge_threshold)?;
+            memory_engine::index_memory(home_dir, edge_threshold, source)?;
         }
         Commands::MemorySearch {
             query,
