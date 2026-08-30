@@ -91,8 +91,8 @@ fn main() -> Result<()> {
         Commands::InstallHooks { repo_dir } => {
             security::install_git_hooks(repo_dir)?;
         }
-        Commands::SecurityAudit { home_dir } => {
-            security::run_security_audit(home_dir)?;
+        Commands::SecurityAudit { fix, home_dir } => {
+            security::run_security_audit(fix, home_dir)?;
         }
         Commands::AgentWorkflow {
             branch_type,

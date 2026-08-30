@@ -184,6 +184,9 @@ pub enum Commands {
 
     /// Run security audit on active configurations and Git state
     SecurityAudit {
+        #[arg(long, help = "Auto-fix findings where possible (permissions, hooks)")]
+        fix: bool,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
