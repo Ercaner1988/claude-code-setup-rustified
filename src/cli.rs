@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 
+use crate::mcp::McpTarget;
+
 #[derive(Parser)]
 #[command(name = "claude-code-setup")]
 #[command(about = "Bagimsiz Rust CLI: Claude Code ortam kurulumu, dinamik MCP yonetimi, semantik + graf hafiza motoru", long_about = None)]
@@ -27,6 +29,9 @@ pub enum Commands {
 
     /// List all configured MCP servers and environment settings
     McpList {
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
@@ -44,6 +49,9 @@ pub enum Commands {
 
         #[arg(short, long, help = "Environment variables (KEY=VALUE)")]
         env: Vec<String>,
+
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
 
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
@@ -64,6 +72,9 @@ pub enum Commands {
         #[arg(long, help = "Completely remove the server from config")]
         remove: bool,
 
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
@@ -73,6 +84,9 @@ pub enum Commands {
         #[arg(help = "Server name")]
         server: String,
 
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
@@ -81,6 +95,9 @@ pub enum Commands {
     McpDisable {
         #[arg(help = "Server name")]
         server: String,
+
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
 
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,

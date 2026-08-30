@@ -24,32 +24,42 @@ fn main() -> Result<()> {
         Commands::Test { home_dir } => {
             tester::run_tests(home_dir)?;
         }
-        Commands::McpList { home_dir } => {
-            mcp::list_mcp_servers(home_dir)?;
+        Commands::McpList { target, home_dir } => {
+            mcp::list_mcp_servers(target, home_dir)?;
         }
         Commands::McpSet {
             server,
             command,
             arg,
             env,
+            target,
             home_dir,
         } => {
-            mcp::mcp_set(&server, command, arg, env, home_dir)?;
+            mcp::mcp_set(&server, command, arg, env, target, home_dir)?;
         }
         Commands::McpUnset {
             server,
             env,
             clear_args,
             remove,
+            target,
             home_dir,
         } => {
-            mcp::mcp_unset(&server, env, clear_args, remove, home_dir)?;
+            mcp::mcp_unset(&server, env, clear_args, remove, target, home_dir)?;
         }
-        Commands::McpEnable { server, home_dir } => {
-            mcp::mcp_toggle(&server, false, home_dir)?;
+        Commands::McpEnable {
+            server,
+            target,
+            home_dir,
+        } => {
+            mcp::mcp_toggle(&server, false, target, home_dir)?;
         }
-        Commands::McpDisable { server, home_dir } => {
-            mcp::mcp_toggle(&server, true, home_dir)?;
+        Commands::McpDisable {
+            server,
+            target,
+            home_dir,
+        } => {
+            mcp::mcp_toggle(&server, true, target, home_dir)?;
         }
         Commands::MemoryIndex {
             home_dir,

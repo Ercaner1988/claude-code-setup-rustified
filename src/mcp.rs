@@ -1,4 +1,5 @@
 use anyhow::{bail, Context, Result};
+use clap::ValueEnum;
 use colored::*;
 use serde_json::{json, Map, Value};
 use std::fs;
@@ -6,24 +7,47 @@ use std::path::{Path, PathBuf};
 
 use crate::installer::get_home_dir;
 
-pub fn resolve_config_path(home_override: Option<String>) -> Result<PathBuf> {
-    let home = get_home_dir(home_override)?;
-    let primary = home
-        .join(".config")
-        .join("claude-code")
-        .join("claude_desktop_config.json");
-    if primary.exists() {
-        return Ok(primary);
+/// MCP yapılandırma hedefi: Claude Code (kullanıcı), proje veya Claude Desktop.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+#[value(rename_all = "kebab-case")]
+pub enum McpTarget {
+    /// Claude Code user config (~/.claude.json)
+    ClaudeCode,
+    /// Project-scoped config (./.mcp.json in current directory)
+    Project,
+    /// Claude Desktop config (claude_desktop_config.json)
+    ClaudeDesktop,
+}
+
+pub fn resolve_config_path(target: McpTarget, home_override: Option<String>) -> Result<PathBuf> {
+    match target {
+        McpTarget::ClaudeCode => {
+            let home = get_home_dir(home_override)?;
+            Ok(home.join(".claude.json"))
+        }
+        McpTarget::Project => Ok(std::env::current_dir()
+            .context("Failed to get current working directory")?
+            .join(".mcp.json")),
+        McpTarget::ClaudeDesktop => {
+            let home = get_home_dir(home_override)?;
+            let primary = home
+                .join(".config")
+                .join("claude-code")
+                .join("claude_desktop_config.json");
+            if primary.exists() {
+                return Ok(primary);
+            }
+            let alt = home
+                .join("AppData")
+                .join("Roaming")
+                .join("Claude")
+                .join("claude_desktop_config.json");
+            if alt.exists() {
+                return Ok(alt);
+            }
+            Ok(primary)
+        }
     }
-    let alt = home
-        .join("AppData")
-        .join("Roaming")
-        .join("Claude")
-        .join("claude_desktop_config.json");
-    if alt.exists() {
-        return Ok(alt);
-    }
-    Ok(primary)
 }
 
 fn read_json_value(path: &Path) -> Result<Value> {
@@ -57,8 +81,8 @@ fn save_json_value_atomically(path: &Path, val: &Value) -> Result<()> {
     Ok(())
 }
 
-pub fn list_mcp_servers(home_override: Option<String>) -> Result<()> {
-    let path = resolve_config_path(home_override)?;
+pub fn list_mcp_servers(target: McpTarget, home_override: Option<String>) -> Result<()> {
+    let path = resolve_config_path(target, home_override)?;
     if !path.exists() {
         println!("{} MCP config file not found at {:?}", "✗".red(), path);
         return Ok(());
@@ -72,6 +96,8 @@ pub fn list_mcp_servers(home_override: Option<String>) -> Result<()> {
         .unwrap_or(&empty_map);
 
     println!("{}", "Configured MCP Servers".cyan().bold());
+    println!("Target: {}", format!("{:?}", target).dimmed());
+    println!("Config: {}", path.display().to_string().dimmed());
     println!("========================================");
 
     for (name, server) in servers {
@@ -123,9 +149,10 @@ pub fn mcp_set(
     command: Option<String>,
     args: Vec<String>,
     env_vars: Vec<String>,
+    target: McpTarget,
     home_override: Option<String>,
 ) -> Result<()> {
-    let path = resolve_config_path(home_override)?;
+    let path = resolve_config_path(target, home_override)?;
     let mut val = if path.exists() {
         read_json_value(&path)?
     } else {
@@ -188,9 +215,10 @@ pub fn mcp_unset(
     env_keys: Vec<String>,
     clear_args: bool,
     remove: bool,
+    target: McpTarget,
     home_override: Option<String>,
 ) -> Result<()> {
-    let path = resolve_config_path(home_override)?;
+    let path = resolve_config_path(target, home_override)?;
     let mut val = read_json_value(&path)?;
 
     let servers = val
@@ -246,8 +274,13 @@ pub fn mcp_unset(
     Ok(())
 }
 
-pub fn mcp_toggle(server_name: &str, disable: bool, home_override: Option<String>) -> Result<()> {
-    let path = resolve_config_path(home_override)?;
+pub fn mcp_toggle(
+    server_name: &str,
+    disable: bool,
+    target: McpTarget,
+    home_override: Option<String>,
+) -> Result<()> {
+    let path = resolve_config_path(target, home_override)?;
     let mut val = read_json_value(&path)?;
 
     let servers = val
@@ -305,6 +338,7 @@ mod tests {
             None,
             vec![],
             vec!["NEW_KEY=val".to_string()],
+            McpTarget::ClaudeDesktop,
             home_override.clone(),
         )
         .unwrap();
@@ -335,7 +369,14 @@ mod tests {
         let home_override = Some(dir.path().to_string_lossy().to_string());
 
         // A3: bayraksız çağrı reddedilmeli
-        let result = mcp_unset("my_srv", vec![], false, false, home_override.clone());
+        let result = mcp_unset(
+            "my_srv",
+            vec![],
+            false,
+            false,
+            McpTarget::ClaudeDesktop,
+            home_override.clone(),
+        );
         assert!(result.is_err());
 
         // Sunucu hâlâ yerinde olmalı
@@ -356,7 +397,15 @@ mod tests {
         let home_override = Some(dir.path().to_string_lossy().to_string());
 
         // --remove ile sil
-        mcp_unset("my_srv", vec![], false, true, home_override.clone()).unwrap();
+        mcp_unset(
+            "my_srv",
+            vec![],
+            false,
+            true,
+            McpTarget::ClaudeDesktop,
+            home_override.clone(),
+        )
+        .unwrap();
 
         // Sunucu silinmiş olmalı
         let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
@@ -364,5 +413,74 @@ mod tests {
 
         // .bak oluşmuş olmalı
         assert!(cfg_dir.join("claude_desktop_config.json.bak").exists());
+    }
+
+    #[test]
+    fn test_resolve_config_path_targets() {
+        let dir = tempdir().unwrap();
+        let home_override = Some(dir.path().to_string_lossy().to_string());
+
+        let cc = resolve_config_path(McpTarget::ClaudeCode, home_override.clone()).unwrap();
+        assert_eq!(cc, dir.path().join(".claude.json"));
+
+        let desktop =
+            resolve_config_path(McpTarget::ClaudeDesktop, home_override.clone()).unwrap();
+        assert!(desktop.ends_with("claude_desktop_config.json"));
+
+        let project = resolve_config_path(McpTarget::Project, None).unwrap();
+        assert!(project.ends_with(".mcp.json"));
+    }
+
+    #[test]
+    fn test_claude_code_target_preserves_unknown_fields() {
+        // ~/.claude.json benzeri: mcpServers dışındaki alanlar korunmalı
+        let raw = r#"{
+            "numStartups": 3,
+            "oauthAccount": {"emailAddress": "x@y.z"},
+            "mcpServers": {
+                "existing_srv": {"command": "node", "args": ["server.js"]}
+            }
+        }"#;
+
+        let dir = tempdir().unwrap();
+        let cfg_path = dir.path().join(".claude.json");
+        fs::write(&cfg_path, raw).unwrap();
+        let home_override = Some(dir.path().to_string_lossy().to_string());
+
+        mcp_set(
+            "new_srv",
+            Some("npx".to_string()),
+            vec!["-y".to_string(), "pkg".to_string()],
+            vec!["API_KEY=abc".to_string()],
+            McpTarget::ClaudeCode,
+            home_override.clone(),
+        )
+        .unwrap();
+
+        let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
+        // Bilinmeyen üst-seviye alanlar korundu mu?
+        assert_eq!(val["numStartups"], 3);
+        assert_eq!(val["oauthAccount"]["emailAddress"], "x@y.z");
+        // Eski sunucu korundu mu?
+        assert_eq!(val["mcpServers"]["existing_srv"]["command"], "node");
+        // Yeni sunucu doğru mu?
+        assert_eq!(val["mcpServers"]["new_srv"]["command"], "npx");
+        assert_eq!(
+            val["mcpServers"]["new_srv"]["args"],
+            json!(["-y", "pkg"])
+        );
+        assert_eq!(val["mcpServers"]["new_srv"]["env"]["API_KEY"], "abc");
+
+        // .bak oluşmuş olmalı
+        assert!(cfg_path.with_extension("json.bak").exists());
+
+        // mcp_toggle ile disable/enable
+        mcp_toggle("existing_srv", true, McpTarget::ClaudeCode, home_override.clone()).unwrap();
+        let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
+        assert_eq!(val["mcpServers"]["existing_srv"]["disabled"], true);
+        assert_eq!(val["numStartups"], 3);
+        mcp_toggle("existing_srv", false, McpTarget::ClaudeCode, home_override).unwrap();
+        let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
+        assert!(val["mcpServers"]["existing_srv"]["disabled"].is_null());
     }
 }
