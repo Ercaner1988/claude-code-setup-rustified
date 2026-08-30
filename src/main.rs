@@ -17,9 +17,10 @@ fn main() -> Result<()> {
     match cli.command {
         Commands::Install {
             skip_prereqs,
+            hooks,
             home_dir,
         } => {
-            installer::run_install(skip_prereqs, home_dir)?;
+            installer::run_install(skip_prereqs, hooks, home_dir)?;
         }
         Commands::Test { home_dir } => {
             tester::run_tests(home_dir)?;

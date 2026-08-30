@@ -12,10 +12,13 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Verify prerequisites and set up the .env.claude environment file
+    /// Verify prerequisites and set up memory skeleton + .env file
     Install {
         #[arg(short, long, help = "Skip prerequisite installation checks")]
         skip_prereqs: bool,
+
+        #[arg(long, help = "Also install pre-commit security hooks into the current repo")]
+        hooks: bool,
 
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
