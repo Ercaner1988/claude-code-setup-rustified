@@ -1,59 +1,181 @@
-# Claude Code Setup — نسخة Rust
+**🌍 [Türkçe](README.md) | [English](README.en.md) | [العربية](README.ar.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Русский](README.ru.md) | [Español](README.es.md)**
 
-أداة سطر أوامر واحدة مبنية **بنسبة 100% بلغة Rust** لإدارة بيئة **Claude Code**: إدارة ديناميكية لخوادم MCP، محرك ذاكرة محلي دلالي قائم على الرسم البياني، تدقيق أمني، وسير عمل Git آمن.
+# Claude Code الإعداد المستقل (محرك Rust بنسبة 100%)
 
-English: [README.md](README.md) · Türkçe: [README.tr.md](README.tr.md)
+[![Rust](https://img.shields.io/badge/Rust-100%25-orange.svg)](https://www.rust-lang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Build Status](https://img.shields.io/badge/Tests-24%20Passed-green.svg)]()
 
-## الميزات
+نظام نشر وإدارة وتدقيق أمني ومحرك ذاكرة عالي الأداء يعتمد **بنسبة 100% على لغة Rust** لبيئة **Claude Code** (`claude-code-setup.exe`).
 
-1. **إدارة MCP ديناميكية** — إدارة خوادم MCP عبر إعدادات **Claude Code** (`~/.claude.json`) و**المشروع** (`.mcp.json`) و**Claude Desktop** باستخدام `--target`؛ التعديلات تحافظ على الحقول غير المعروفة، وتُكتب بشكل ذرّي مع نسخة احتياطية `.bak`.
-2. **محرك ذاكرة محلي** — فهرسة ملاحظات Markdown في SQLite: بحث بالكلمات المفتاحية FTS5، تضمينات محلية (Multilingual-E5-Small عبر fastembed، دون اتصال بالكامل)، ترتيب هجين RRF، ورسم بياني للروابط والتشابه الدلالي (`memory-related`).
-3. **تدقيق أمني مع إصلاح تلقائي** — فحص الرموز السرية المكشوفة، فرض صلاحيات الملفات على Unix، وتثبيت خطافات pre-commit للحماية (`security-audit --fix`).
-4. **سير عمل Git آمن** — `agent-workflow` ينشئ فروع ميزات من الفرع الافتراضي البعيد ويرفض الدفع إلى الفروع المحمية؛ جميع أخطاء git تظهر بوضوح.
+تمت إزالة جميع سكربتات Bash (`.sh`) و Python (`.py`) القديمة بالكامل وتحويلها إلى برنامج تنفيذي محلي موحد بلغة Rust.
 
-## البناء والاستخدام
+---
 
-يتطلب Rust toolchain (الإصدار 1.80+). يعمل على Windows وLinux وmacOS.
+## 🎯 1. الغرض والميزات
 
+- **بنية Rust خالصة 100%:** إلغاء كافة الاعتمادات على سكربتات Shell وبيئة تشغيل Python.
+- **تطبيع المسارات تلقائياً:** تحويل مسارات النظام الثابتة (مثل `/home/jb_remus`) تلقائياً إلى البيئة المحلية ودليل المستخدم الرئيسي.
+- **إدارة MCP متعددة الأهداف (`--target`):**
+  - إدارة خوادم MCP عبر إعدادات **Claude Code** (`~/.claude.json`) و**المشروع** (`./.mcp.json`) و**Claude Desktop** (`claude_desktop_config.json`).
+  - الحفاظ على الحقول غير النمطية في JSON وإنشاء نسخ احتياطية تلقائية `.bak`.
+- **محرك ذاكرة سريع قائم على SQLite (متجهات + رسم بياني):**
+  - **إضافة ملاحظات سريعة (`memory-note`):** إضافة ملاحظات Markdown بأسماء kebab-case دون الكتابة فوق الملفات الموجودة.
+  - **بحث الكلمات المفتاحية FTS5:** بحث نصي كامل مع هروب تلقائي لرموز الاستعلام الخاصة.
+  - **التضمين المحلي:** حساب تشابه جيب التمام محلياً وبدون اتصال عبر `fastembed` (Multilingual-E5-Small).
+  - **حواف الرسم البياني وروابط Wikilink:** تنقل الجوار عبر إشارات `[[Note-Name]]` والروابط الدلالية (`memory-related`).
+  - **الترتيب الهجين RRF:** استخدام خوارزمية Reciprocal Rank Fusion (`k=60`) لدمج نتائج البحث بأعلى دقة.
+- **تدقيق أمني مع إصلاح تلقائي (`security-audit --fix`):**
+  - فحص الرموز السرية المكشوفة في ملفات التكوين.
+  - فرض وتصحيح صلاحيات الملفات تلقائياً على أنظمة Unix.
+  - تثبيت خطافات pre-commit لحماية الأفرع وفحص الأسرار.
+- **سير عمل Git آمن ومستقل (`agent-workflow`):**
+  - إنشاء أفرع الميزات تلقائياً من الأفرع الافتراضية البعيدة.
+  - حظر الدفع المباشر إلى الأفرع الرئيسية المحمية.
+
+---
+
+## 🏗️ 2. البنية والموديولات
+
+```
+claude-code-complete-setup/
+├── Cargo.toml                  # بيان المشروع واعتمادات Rust
+├── src/
+│   ├── main.rs                 # نقطة الدخول والموجه
+│   ├── cli.rs                  # تعريفات الأوامر والخيارات والأهداف عبر Clap
+│   ├── mcp.rs                  # مدير MCP متعدد الأهداف للحفاظ على قيم JSON
+│   ├── memory_engine.rs        # محرك FTS5 + متجهات + رسم بياني + RRF + memory-note
+│   ├── installer.rs            # إنشاء الهيكل وتثبيت README الابتدائي وملف .env
+│   ├── security.rs             # مدقق الأمان مع الإصلاح التلقائي وإدارة الخطافات
+│   ├── branch_manager.rs       # مشغل سير عمل أفرع Git المحمية
+│   ├── tester.rs               # مشغل حزمة التشخيص والاختبار
+│   └── agent.rs                # واجهة تكامل الوكلاء
+└── docs/                       # أدلة التثبيت واستكشاف الأخطاء وإصلاحها
+```
+
+### مسؤوليات الموديولات
+- `src/main.rs`: تحليل وسائط سطر الأوامر وتوجيه التنفيذ إلى الموديول المناسب.
+- `src/cli.rs`: إدارة الأوامر والخيارات (`--target`, `--fix`, `--hooks`, `--mode`) ونصوص المساعدة عبر Clap.
+- `src/mcp.rs`: قراءة وتحديث تكوينات MCP بناءً على الهدف المSelected (`claude-code`, `project`, `claude-desktop`) مع الحفاظ على الحقول المخصصة.
+- `src/memory_engine.rs`: تقسيم النصوص إلى قطع وإدارة جداول SQLite (`knowledge_notes` و `note_edges`) وإضافة الملاحظات بأمان عبر `memory-note`.
+- `src/installer.rs`: إنشاء دليل `~/claude_global_memory/knowledge` وملف `README.md` الابتدائي دون إتلاف الملفات القديمة.
+- `src/security.rs`: تدقيق الأسرار والأذونات، وتطبيق الإصلاح التلقائي بـ `--fix` وتثبيت خطافات الأمان.
+- `src/branch_manager.rs`: أتمتة إنشاء الأفرع والحفاظ على حماية الأفرع الرئيسية.
+- `src/tester.rs`: تشغيل اختبارات التحقق والتشخيص (`status` و `test`).
+
+---
+
+## 🚀 3. التثبيت والإعداد
+
+### المتطلبات الأساسية
+- **أدوات Rust:** `rustc` و `cargo` (الإصدار 1.80+)
+
+### التجميع
 ```bash
-# البناء
+# بناء النسخة التنفيذية
 cargo build --release
 
-# التحقق من المتطلبات وإعداد هيكل الذاكرة وملف .env
-./target/release/claude-code-setup install
+# الملف التنفيذي الناتج:
+# Windows: ./target/release/claude-code-setup.exe
+# Linux/macOS: ./target/release/claude-code-setup
+```
+
+### التثبيت التلقائي والتشخيص
+```bash
+# تشغيل الإعداد التلقائي وتثبيت خطافات الأمان
+./target/release/claude-code-setup install --hooks
 
 # تشغيل تشخيص البيئة
 ./target/release/claude-code-setup status
 ```
 
-## الأوامر
+---
+
+## 📖 4. الاستخدام والأمثلة
+
+### جدول ملخص الأوامر
 
 | الأمر | الوصف |
 | :--- | :--- |
-| `install [--hooks]` | التحقق من المتطلبات، إنشاء `~/claude_global_memory/knowledge` (دون الكتابة فوق الموجود)، إنشاء `.env` من `.env.example` عند غيابه |
-| `test` / `status` | تشخيص البيئة: Claude CLI، `~/.claude.json`، قاعدة بيانات الذاكرة، ذاكرة النموذج المؤقتة، الخطافات، متغيرات البيئة |
-| `mcp-list [--target T]` | سرد خوادم MCP المكونة |
-| `mcp-set <srv> [--command X] [--arg A]... [--env K=V]... [--target T]` | إنشاء/تحديث خادم MCP |
-| `mcp-unset <srv> [--env K]... [--clear-args] [--remove] [--target T]` | إزالة حقول؛ حذف الخادم يتطلب `--remove` |
-| `mcp-enable <srv>` / `mcp-disable <srv> [--target T]` | تفعيل/تعطيل خادم دون حذف إعداداته |
-| `memory-note <عنوان> [--body ...]` | إضافة ملاحظة إلى قاعدة المعرفة (اسم ملف kebab-case، دون الكتابة فوق الموجود) |
-| `memory-index [--source DIR]... [--edge-threshold 0.70]` | فهرسة الملاحظات في SQLite (تضمينات + حواف الرسم البياني) |
-| `memory-search <استعلام> [--mode keyword\|semantic\|hybrid] [--limit 5] [--min-score 0.30]` | البحث في الملاحظات المفهرسة (الافتراضي: RRF هجين) |
-| `memory-related <ملاحظة.md>` | عرض الملاحظات ذات الصلة عبر حواف الرسم البياني (BFS، قفزتان) |
-| `install-hooks [--repo-dir PATH]` | تثبيت خطاف pre-commit الأمني في مستودع |
-| `security-audit [--fix]` | فحص الأسرار، التحقق من الصلاحيات (Unix)، التحقق من الخطافات والفرع |
-| `agent-workflow [-t TYPE] -d DESC [-f FILE]...` | إنشاء فرع ميزة، commit للملفات، ودفعها — مع حماية الفروع المحمية |
+| `install [--hooks]` | التثبيت الكامل وإنشاء هيكل الذاكرة وإعداد `.env` |
+| `test` / `status` | تشخيص البيئة وخوادم MCP والذاكرة والخطافات |
+| `mcp-list [--target T]` | سرد خوادم MCP المكونة بناءً على الهدف |
+| `mcp-set <srv> [...] [--target T]` | إنشاء/تحديث خادم MCP (`--target`: `claude-code`, `project`, `claude-desktop`) |
+| `mcp-unset <srv> [...] [--remove] [--target T]` | إزالة حقول؛ حذف الخادم يتطلب `--remove` |
+| `mcp-enable <srv>` / `mcp-disable <srv>` | تفعيل/تعطيل خادم دون حذف إعداداته |
+| `memory-note <عنوان> [--body ...]` | إضافة ملاحظة Markdown جديدة بأمان |
+| `memory-index [--source DIR]...` | فهرسة الملاحظات في محرك المتجهات والرسم البياني |
+| `memory-search <استعلام> [--mode ...]` | البحث في الملاحظات المفهرسة بـ FTS5 أو المتجهات أو RRF الهجين |
+| `memory-related <ملاحظة.md>` | عرض الملاحظات ذات الصلة عبر حواف الرسم البياني |
+| `install-hooks [--repo-dir PATH]` | تثبيت خطاف pre-commit الأمني في المستودع |
+| `security-audit [--fix]` | تدقيق أمان الصلاحيات والأسرار؛ `--fix` يطبق الإصلاح التلقائي |
+| `agent-workflow [-t TYPE] -d DESC` | تنفيذ سير عمل الأفرع والالتزام المستقل مع حماية الأفرع الرئيسية |
 
-قيم `--target`: `claude-code` (الافتراضي، `~/.claude.json`)، `project` (`./.mcp.json`)، `claude-desktop` (`claude_desktop_config.json`).
+### أمثلة على سيناريوهات الاستخدام
 
-## ملاحظات محرك الذاكرة
+#### إدارة خوادم MCP حسب الهدف
+```bash
+# إعداد خادم MCP على مستوى المشروع (.mcp.json)
+./target/release/claude-code-setup mcp-set github --command "npx" --arg "-y" --arg "@modelcontextprotocol/server-github" --env "GITHUB_TOKEN=ghp_example" --target project
 
-- دليل المعرفة الافتراضي: `~/claude_global_memory/knowledge` (ينشئه `install`؛ أضف ملاحظات بـ `memory-note`).
-- نموذج التضمين (~100 ميغابايت) يُحمَّل عند أول `memory-index`/`memory-search` ويُخزَّن محلياً؛ بعدها يعمل كل شيء دون اتصال.
-- البحث الخطي بتشابه جيب التمام مقصود عند هذا الحجم؛ مكان إضافة فهرس ANN موضَّح في الكود عند نمو عدد الملاحظات إلى الآلاف.
+# تعطيل خادم في إعدادات Claude Desktop
+./target/release/claude-code-setup mcp-disable github --target claude-desktop
 
-## الأمان
+# إزالة الخادم بالكامل (يتطلب علم --remove)
+./target/release/claude-code-setup mcp-unset github --remove --target claude-code
+```
 
-- لا أسرار في المستودع؛ `.env` مستثنى من git ولا يُكتب فوقه أبداً.
-- كل كتابة إعدادات ذرّية (temp + rename) وتترك نسخة احتياطية `.bak`.
-- `mcp-unset <srv>` بدون خيارات يرفض التنفيذ — الحذف التدميري يتطلب `--remove`.
+#### إضافة ملاحظة ذاكرة والبحث الهجين
+```bash
+# إضافة ملاحظة جديدة
+./target/release/claude-code-setup memory-note "قرارات البنية" --body "تم الانتهاء من التحويل إلى Rust بالكامل."
+
+# فهرسة ملاحظات المعرفة
+./target/release/claude-code-setup memory-index --edge-threshold 0.70
+
+# تشغيل البحث الهجين RRF
+./target/release/claude-code-setup memory-search "بنية Rust" --mode hybrid --limit 5
+
+# الاستعلام عن الملاحظات المرتبطة
+./target/release/claude-code-setup memory-related architecture-decisions.md
+```
+
+---
+
+## 🛡️ 5. بوابات الجودة والاختبارات
+
+يتضمن المشروع 24 اختبار وحدة، وجميعها ناجحة حالياً:
+
+```bash
+cargo test
+```
+
+### معايير الجودة
+- **اختبارات الوحدة (24/24 ناجح):** التحقق من إدارة MCP متعددة الأهداف، والحفاظ على JSON Value، والهروب في FTS5، والترتيب الهجين RRF، واستخراج الروابط، وفحص الأسرار وحماية الأفرع.
+- **التنسيق:** مفروض عبر `cargo fmt --check`
+- **التكامل المستمر (CI):** مفحوص على Ubuntu وmacOS وWindows عبر `.github/workflows/rust.yml` و `.github/workflows/release.yml`.
+
+---
+
+## 👥 6. المساهمون
+
+| المساهم | الدور / المسؤولية | المقاييس |
+| :--- | :--- | :--- |
+| **Ercan ER** | المهندس الرئيسي، والتحويل إلى Rust، والمطور الأساسي | 26 commits |
+| **Kassam** | وكيل الذكاء الاصطناعي المستقل ومطور محرك Rust والموديولات | مؤلف مشارك / مساهم |
+| **Copilot** | مساعد البرمجة بالذكاء الاصطناعي | 4 commits |
+| **jb_remus** | المؤلف الأصلي للمشروع | 2 commits |
+| **Mihenk** | مدقق الكود ومراجع الجودة | 1 commit |
+| **arturo-ebuck** | مساهم في المصدر المفتوح | 1 commit |
+
+---
+
+## 📄 7. الترخيص والمراجع
+
+موزع تحت [رخصة MIT](LICENSE).
+
+### الوثائق ذات الصلة
+- [دليل النشر](DEPLOYMENT_GUIDE.md)
+- [دليل التثبيت اليدوي](docs/MANUAL_SETUP.md)
+- [دليل استكشاف الأخطاء وإصلاحها](docs/TROUBLESHOOTING.md)
+- [توجيهات المطورين](docs/dev/TASK-KASSAM-1-2.md)
