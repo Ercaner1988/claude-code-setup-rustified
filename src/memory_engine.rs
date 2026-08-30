@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use colored::*;
 use fastembed::{EmbeddingModel, InitOptions, TextEmbedding};
 use regex::Regex;
@@ -7,6 +7,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs;
 use std::path::PathBuf;
 
+use crate::branch_manager::sanitize_description;
 use crate::installer::get_home_dir;
 
 // ─── Yardımcılar ────────────────────────────────────────────────────────────
@@ -39,8 +40,10 @@ pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
 
 fn bytes_to_f32_vec(bytes: &[u8]) -> Vec<f32> {
     bytes
-        .chunks_exact(4)
-        .map(|chunk| f32::from_le_bytes(chunk.try_into().unwrap()))
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| f32::from_le_bytes(*chunk))
         .collect()
 }
 
@@ -186,6 +189,55 @@ pub fn init_db(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
+// ─── Not Ekleme ─────────────────────────────────────────────────────────────
+
+/// Varsayılan knowledge dizini: <home>/claude_global_memory/knowledge
+pub fn default_knowledge_dir(home_override: Option<String>) -> Result<PathBuf> {
+    let home = get_home_dir(home_override)?;
+    Ok(home.join("claude_global_memory").join("knowledge"))
+}
+
+/// Yeni bir markdown notu ekler. Dosya adı başlıktan kebab-case türetilir.
+/// Var olan dosyanın üzerine ASLA yazmaz. Dizini döndürür.
+pub fn add_memory_note(
+    title: &str,
+    body: Option<&str>,
+    dir_override: Option<String>,
+    home_override: Option<String>,
+) -> Result<PathBuf> {
+    let dir = match dir_override {
+        Some(d) => PathBuf::from(d),
+        None => default_knowledge_dir(home_override)?,
+    };
+    fs::create_dir_all(&dir)
+        .with_context(|| format!("Failed to create knowledge directory {:?}", dir))?;
+
+    let slug = sanitize_description(title);
+    if slug.is_empty() {
+        bail!("Title '{}' does not produce a usable filename", title);
+    }
+    let path = dir.join(format!("{}.md", slug));
+    if path.exists() {
+        bail!(
+            "Note already exists: {:?}. Choose a different title or edit the file directly.",
+            path
+        );
+    }
+
+    let content = match body {
+        Some(b) if !b.trim().is_empty() => format!("# {}\n\n{}\n", title, b),
+        _ => format!("# {}\n", title),
+    };
+    fs::write(&path, content).with_context(|| format!("Failed to write note {:?}", path))?;
+
+    println!(
+        "{} Created note {} (run memory-index to make it searchable)",
+        "✓".green().bold(),
+        path.display().to_string().cyan()
+    );
+    Ok(path)
+}
+
 // ─── İndeksleme ─────────────────────────────────────────────────────────────
 
 pub fn index_memory(
@@ -193,12 +245,11 @@ pub fn index_memory(
     edge_threshold: f32,
     sources: Vec<String>,
 ) -> Result<()> {
-    let home = get_home_dir(home_override.clone())?;
-    let db_path = get_db_path(home_override)?;
+    let db_path = get_db_path(home_override.clone())?;
 
     // --source verilmezse eski davranis korunur: <home>/claude_global_memory/knowledge
     let knowledge_dirs: Vec<PathBuf> = if sources.is_empty() {
-        vec![home.join("claude_global_memory").join("knowledge")]
+        vec![default_knowledge_dir(home_override)?]
     } else {
         sources.iter().map(PathBuf::from).collect()
     };
@@ -696,5 +747,50 @@ mod tests {
         assert!(chunks.len() >= 2);
         let rejoined: String = chunks.concat();
         assert_eq!(rejoined, content, "chunk'lar orijinali kayıpsız vermeli");
+    }
+
+    #[test]
+    fn test_add_memory_note_creates_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let note_dir = dir.path().join("knowledge");
+        let path = add_memory_note(
+            "My Great Note!",
+            Some("Body text here."),
+            Some(note_dir.to_string_lossy().to_string()),
+            None,
+        )
+        .unwrap();
+        assert_eq!(
+            path.file_name().unwrap().to_str().unwrap(),
+            "my-great-note.md"
+        );
+        let content = fs::read_to_string(&path).unwrap();
+        assert!(content.starts_with("# My Great Note!"));
+        assert!(content.contains("Body text here."));
+    }
+
+    #[test]
+    fn test_add_memory_note_refuses_overwrite() {
+        let dir = tempfile::tempdir().unwrap();
+        let note_dir = dir.path().join("knowledge");
+        let dir_arg = Some(note_dir.to_string_lossy().to_string());
+        add_memory_note("Dup Note", None, dir_arg.clone(), None).unwrap();
+        let second = add_memory_note("Dup Note", Some("other"), dir_arg, None);
+        assert!(second.is_err());
+        // İlk içerik korunmuş olmalı
+        let content = fs::read_to_string(note_dir.join("dup-note.md")).unwrap();
+        assert_eq!(content, "# Dup Note\n");
+    }
+
+    #[test]
+    fn test_add_memory_note_rejects_empty_slug() {
+        let dir = tempfile::tempdir().unwrap();
+        let result = add_memory_note(
+            "!!!",
+            None,
+            Some(dir.path().to_string_lossy().to_string()),
+            None,
+        );
+        assert!(result.is_err());
     }
 }

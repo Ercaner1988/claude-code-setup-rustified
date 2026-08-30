@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 
+use crate::mcp::McpTarget;
+
 #[derive(Parser)]
 #[command(name = "claude-code-setup")]
 #[command(about = "Bagimsiz Rust CLI: Claude Code ortam kurulumu, dinamik MCP yonetimi, semantik + graf hafiza motoru", long_about = None)]
@@ -10,10 +12,16 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Verify prerequisites and set up the .env.claude environment file
+    /// Verify prerequisites and set up memory skeleton + .env file
     Install {
         #[arg(short, long, help = "Skip prerequisite installation checks")]
         skip_prereqs: bool,
+
+        #[arg(
+            long,
+            help = "Also install pre-commit security hooks into the current repo"
+        )]
+        hooks: bool,
 
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
@@ -27,6 +35,9 @@ pub enum Commands {
 
     /// List all configured MCP servers and environment settings
     McpList {
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
@@ -44,6 +55,9 @@ pub enum Commands {
 
         #[arg(short, long, help = "Environment variables (KEY=VALUE)")]
         env: Vec<String>,
+
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
 
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
@@ -64,6 +78,9 @@ pub enum Commands {
         #[arg(long, help = "Completely remove the server from config")]
         remove: bool,
 
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
@@ -73,6 +90,9 @@ pub enum Commands {
         #[arg(help = "Server name")]
         server: String,
 
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },
@@ -81,6 +101,9 @@ pub enum Commands {
     McpDisable {
         #[arg(help = "Server name")]
         server: String,
+
+        #[arg(long, value_enum, default_value_t = McpTarget::ClaudeCode, help = "Config target")]
+        target: McpTarget,
 
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
@@ -141,6 +164,24 @@ pub enum Commands {
         home_dir: Option<String>,
     },
 
+    /// Add a new markdown note to the global memory knowledge base
+    MemoryNote {
+        #[arg(help = "Note title (used as # heading; kebab-case filename derived)")]
+        title: String,
+
+        #[arg(short, long, help = "Note body text")]
+        body: Option<String>,
+
+        #[arg(
+            long,
+            help = "Target directory override (default: <home>/claude_global_memory/knowledge)"
+        )]
+        dir: Option<String>,
+
+        #[arg(long, help = "Custom home directory override")]
+        home_dir: Option<String>,
+    },
+
     /// Install security & Git pre-commit branch protection hooks
     InstallHooks {
         #[arg(short, long, help = "Target repository path")]
@@ -149,6 +190,9 @@ pub enum Commands {
 
     /// Run security audit on active configurations and Git state
     SecurityAudit {
+        #[arg(long, help = "Auto-fix findings where possible (permissions, hooks)")]
+        fix: bool,
+
         #[arg(long, help = "Custom home directory override")]
         home_dir: Option<String>,
     },

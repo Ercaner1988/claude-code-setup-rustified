@@ -17,39 +17,50 @@ fn main() -> Result<()> {
     match cli.command {
         Commands::Install {
             skip_prereqs,
+            hooks,
             home_dir,
         } => {
-            installer::run_install(skip_prereqs, home_dir)?;
+            installer::run_install(skip_prereqs, hooks, home_dir)?;
         }
         Commands::Test { home_dir } => {
             tester::run_tests(home_dir)?;
         }
-        Commands::McpList { home_dir } => {
-            mcp::list_mcp_servers(home_dir)?;
+        Commands::McpList { target, home_dir } => {
+            mcp::list_mcp_servers(target, home_dir)?;
         }
         Commands::McpSet {
             server,
             command,
             arg,
             env,
+            target,
             home_dir,
         } => {
-            mcp::mcp_set(&server, command, arg, env, home_dir)?;
+            mcp::mcp_set(&server, command, arg, env, target, home_dir)?;
         }
         Commands::McpUnset {
             server,
             env,
             clear_args,
             remove,
+            target,
             home_dir,
         } => {
-            mcp::mcp_unset(&server, env, clear_args, remove, home_dir)?;
+            mcp::mcp_unset(&server, env, clear_args, remove, target, home_dir)?;
         }
-        Commands::McpEnable { server, home_dir } => {
-            mcp::mcp_toggle(&server, false, home_dir)?;
+        Commands::McpEnable {
+            server,
+            target,
+            home_dir,
+        } => {
+            mcp::mcp_toggle(&server, false, target, home_dir)?;
         }
-        Commands::McpDisable { server, home_dir } => {
-            mcp::mcp_toggle(&server, true, home_dir)?;
+        Commands::McpDisable {
+            server,
+            target,
+            home_dir,
+        } => {
+            mcp::mcp_toggle(&server, true, target, home_dir)?;
         }
         Commands::MemoryIndex {
             home_dir,
@@ -70,11 +81,19 @@ fn main() -> Result<()> {
         Commands::MemoryRelated { note, home_dir } => {
             memory_engine::get_related_notes(&note, home_dir)?;
         }
+        Commands::MemoryNote {
+            title,
+            body,
+            dir,
+            home_dir,
+        } => {
+            memory_engine::add_memory_note(&title, body.as_deref(), dir, home_dir)?;
+        }
         Commands::InstallHooks { repo_dir } => {
             security::install_git_hooks(repo_dir)?;
         }
-        Commands::SecurityAudit { home_dir } => {
-            security::run_security_audit(home_dir)?;
+        Commands::SecurityAudit { fix, home_dir } => {
+            security::run_security_audit(fix, home_dir)?;
         }
         Commands::AgentWorkflow {
             branch_type,

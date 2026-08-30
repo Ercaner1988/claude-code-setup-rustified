@@ -1,131 +1,78 @@
-# Claude Code Complete Deployment Guide
+# Deployment Guide
 
-## Overview
+This guide deploys the Rust CLI onto a fresh machine (Windows, Linux, or macOS).
 
-This repository provides a **complete, plug-and-play Claude Code setup** that can be deployed on any Windows PC with WSL2/Ubuntu in minutes.
+## Prerequisites
 
-## What Makes This Special
+| Tool | Windows | Linux / macOS |
+| :--- | :--- | :--- |
+| Rust toolchain (1.80+) | [rustup](https://rustup.rs) | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
+| Git | [git-scm.com](https://git-scm.com) | distro package manager |
+| Claude Code CLI | `npm install -g @anthropic-ai/claude-code` (needs Node.js) | same |
 
-1. **One-Command Setup**: Run `./setup.sh` and everything is configured automatically
-2. **Complete Package**: Includes all 19 MCP servers, SuperClaude framework, global memory, and security configurations
-3. **Zero Configuration**: Works out of the box with sensible defaults
-4. **IDE Agnostic**: Works with Cursor, VS Code, Windsurf, or any editor
-5. **Fully Documented**: Comprehensive guides for every scenario
+`install` checks all of these and reports anything missing.
 
-## Deployment Process
+## Deploy
 
-### On Your Current Machine (Export)
-
-1. **Prepare the repository**:
-   ```bash
-   cd /mnt/c/Admin-Tools_JB/claude-code-complete-setup
-   
-   # Add your API keys (optional - can be done on target machine)
-   cp .env.example .env
-   # Edit .env with your keys
-   ```
-
-2. **Initialize git and push to GitHub**:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial Claude Code complete setup"
-   git remote add origin https://github.com/yourusername/claude-code-complete-setup.git
-   git push -u origin main
-   ```
-
-### On Target Machine (Import)
-
-1. **Prerequisites** (in WSL2 Ubuntu):
-   ```bash
-   # Install git if not present
-   sudo apt update && sudo apt install -y git
-   ```
-
-2. **Deploy**:
-   ```bash
-   # Clone your repository
-   git clone https://github.com/yourusername/claude-code-complete-setup.git
-   cd claude-code-complete-setup
-   
-   # Run setup
-   chmod +x setup.sh
-   ./setup.sh
-   ```
-
-3. **Configure** (if not done earlier):
-   ```bash
-   cp .env.example .env
-   nano .env  # Add your API keys
-   source ~/.bashrc
-   ```
-
-4. **Verify**:
-   ```bash
-   ./test-deployment.sh
-   ```
-
-## Time Estimates
-
-- **Export preparation**: 2-3 minutes
-- **Target machine setup**: 5-10 minutes (depending on internet speed)
-- **Total time**: Under 15 minutes for complete deployment
-
-## What Gets Transferred
-
-✅ **Everything**:
-- Claude Code CLI installation
-- All 19 MCP server configurations
-- SuperClaude framework (all 9 files)
-- Global memory system (all knowledge files)
-- GitHub workflow automation
-- Security configurations and git hooks
-- All scripts and tools
-- IDE configurations (if applicable)
-
-## Customization Options
-
-### Before Deployment
-- Edit `.env` for API keys
-- Modify `config/claude-code/claude_desktop_config.json` to add/remove MCP servers
-- Add custom content to `global_memory/knowledge/`
-
-### After Deployment
-- Run `./update.sh` to pull latest changes
-- Edit configurations in `~/.claude/` and `~/.config/claude-code/`
-- Add project-specific memory to `~/claude_global_memory/projects/`
-
-## Security Notes
-
-- No secrets are stored in the repository
-- All sensitive files have proper permissions (600/700)
-- Git hooks prevent accidental main branch commits
-- API keys use environment variables
-
-## Maintenance
-
-To update your setup on any machine:
 ```bash
-cd ~/claude-code-complete-setup
-git pull
-./update.sh
+git clone https://github.com/Ercaner1988/claude-code-setup-rustified.git
+cd claude-code-setup-rustified
+cargo build --release
+
+# Verify prerequisites, create the memory knowledge base skeleton and .env
+./target/release/claude-code-setup install --hooks
+
+# Verify the environment
+./target/release/claude-code-setup status
 ```
 
-## Success Indicators
+The binary is self-contained; copy `target/release/claude-code-setup` (`.exe` on Windows) anywhere on your PATH for convenient access.
 
-After deployment, you should see:
-- ✅ Claude CLI responds to commands
-- ✅ 19 MCP servers listed in configuration
-- ✅ SuperClaude /sc: commands available
-- ✅ Global memory accessible
-- ✅ Git hooks preventing main commits
+The embedding model (~100 MB) is downloaded once on the first `memory-index` or `memory-search` run and cached locally afterwards.
 
-## Support
+## What Gets Configured
 
-- Check `docs/TROUBLESHOOTING.md` for common issues
-- Run `./test-deployment.sh` to diagnose problems
-- All configurations are in standard locations for easy debugging
+- `~/claude_global_memory/knowledge/` — knowledge base skeleton with a seed README (existing content is never touched)
+- `.env` in the repo — created from `.env.example` only if missing; fill in your API keys
+- Pre-commit security hook in the current repository (with `--hooks`)
 
----
+Nothing under `~/.claude/` is ever overwritten by `install`.
 
-**Bottom Line**: This repository turns a 2-hour manual setup into a 10-minute automated deployment, preserving every configuration detail and customization from your current setup.
+## Day-to-day Operations
+
+```bash
+# Manage MCP servers (Claude Code user config by default)
+claude-code-setup mcp-list
+claude-code-setup mcp-set my-server --command npx --arg "-y" --arg "some-mcp" --env KEY=VALUE
+claude-code-setup mcp-disable my-server
+claude-code-setup mcp-unset my-server --remove          # deletion requires --remove
+
+# Project-scoped servers (./.mcp.json) or Claude Desktop
+claude-code-setup mcp-list --target project
+claude-code-setup mcp-list --target claude-desktop
+
+# Memory
+claude-code-setup memory-note "My finding" --body "Details..."
+claude-code-setup memory-index
+claude-code-setup memory-search "how do hooks work"
+claude-code-setup memory-related my-finding.md
+
+# Security
+claude-code-setup security-audit --fix
+```
+
+## Updating
+
+```bash
+git pull
+cargo build --release
+```
+
+## Verification Checklist
+
+- `status` reports Claude CLI installed and `~/.claude.json` parsed with your MCP servers
+- `mcp-list` shows your servers
+- `memory-search` returns results after a note has been added and indexed
+- `security-audit` reports no findings
+
+See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) if anything reports red.
