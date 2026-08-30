@@ -147,9 +147,15 @@ mod tests {
     #[test]
     fn test_sanitize_description() {
         assert_eq!(sanitize_description("Fix Login Bug!"), "fix-login-bug");
-        assert_eq!(sanitize_description("  multiple   spaces  "), "multiple-spaces");
+        assert_eq!(
+            sanitize_description("  multiple   spaces  "),
+            "multiple-spaces"
+        );
         assert_eq!(sanitize_description("already-good"), "already-good");
         assert_eq!(sanitize_description("!!!"), "");
-        assert_eq!(sanitize_description("Dots...and---dashes"), "dots-and-dashes");
+        assert_eq!(
+            sanitize_description("Dots...and---dashes"),
+            "dots-and-dashes"
+        );
     }
 }

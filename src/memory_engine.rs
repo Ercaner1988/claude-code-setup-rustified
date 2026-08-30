@@ -40,8 +40,10 @@ pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
 
 fn bytes_to_f32_vec(bytes: &[u8]) -> Vec<f32> {
     bytes
-        .chunks_exact(4)
-        .map(|chunk| f32::from_le_bytes(chunk.try_into().unwrap()))
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| f32::from_le_bytes(*chunk))
         .collect()
 }
 
@@ -758,7 +760,10 @@ mod tests {
             None,
         )
         .unwrap();
-        assert_eq!(path.file_name().unwrap().to_str().unwrap(), "my-great-note.md");
+        assert_eq!(
+            path.file_name().unwrap().to_str().unwrap(),
+            "my-great-note.md"
+        );
         let content = fs::read_to_string(&path).unwrap();
         assert!(content.starts_with("# My Great Note!"));
         assert!(content.contains("Body text here."));

@@ -17,7 +17,10 @@ pub enum Commands {
         #[arg(short, long, help = "Skip prerequisite installation checks")]
         skip_prereqs: bool,
 
-        #[arg(long, help = "Also install pre-commit security hooks into the current repo")]
+        #[arg(
+            long,
+            help = "Also install pre-commit security hooks into the current repo"
+        )]
         hooks: bool,
 
         #[arg(long, help = "Custom home directory override")]

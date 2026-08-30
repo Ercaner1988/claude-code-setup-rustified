@@ -94,7 +94,10 @@ pub fn run_tests(home_override: Option<String>) -> Result<()> {
 
     // Test 6: Pre-commit hook (mevcut repo)
     print!("Testing pre-commit security hook... ");
-    let hook = env::current_dir()?.join(".git").join("hooks").join("pre-commit");
+    let hook = env::current_dir()?
+        .join(".git")
+        .join("hooks")
+        .join("pre-commit");
     if hook.exists() {
         println!("{}", "✓ Installed".green());
     } else {
@@ -109,10 +112,7 @@ pub fn run_tests(home_override: Option<String>) -> Result<()> {
     if env::var("GITHUB_TOKEN").is_ok() || env::var("ANTHROPIC_API_KEY").is_ok() {
         println!("{}", "✓ Set".green());
     } else {
-        println!(
-            "{}",
-            "⚠ API Keys not set in shell environment".yellow()
-        );
+        println!("{}", "⚠ API Keys not set in shell environment".yellow());
     }
 
     println!("===============================================");

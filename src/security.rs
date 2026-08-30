@@ -137,13 +137,13 @@ pub fn run_security_audit(fix: bool, home_override: Option<String>) -> Result<()
     let mut findings = 0usize;
 
     // 1) MCP yapılandırmalarında plaintext secret taraması
-    println!("{}", "1. Scanning MCP configs for plaintext secrets...".bold());
+    println!(
+        "{}",
+        "1. Scanning MCP configs for plaintext secrets...".bold()
+    );
     let configs: Vec<(PathBuf, &str)> = vec![
         (home.join(".claude.json"), "Claude Code user config"),
-        (
-            env::current_dir()?.join(".mcp.json"),
-            "Project .mcp.json",
-        ),
+        (env::current_dir()?.join(".mcp.json"), "Project .mcp.json"),
         (
             resolve_config_path(McpTarget::ClaudeDesktop, home_override)?,
             "Claude Desktop config",

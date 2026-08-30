@@ -50,8 +50,7 @@ Notlar arasında `[[Diğer Not]]` biçiminde wikilink kullanabilirsiniz; graf ke
 /// Oluşturulduysa true döner.
 fn ensure_knowledge_skeleton(home: &Path) -> Result<bool> {
     let knowledge = home.join("claude_global_memory").join("knowledge");
-    fs::create_dir_all(&knowledge)
-        .with_context(|| format!("Failed to create {:?}", knowledge))?;
+    fs::create_dir_all(&knowledge).with_context(|| format!("Failed to create {:?}", knowledge))?;
     let readme = knowledge.join("README.md");
     if readme.exists() {
         return Ok(false);

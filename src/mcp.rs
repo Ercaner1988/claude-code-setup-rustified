@@ -423,8 +423,7 @@ mod tests {
         let cc = resolve_config_path(McpTarget::ClaudeCode, home_override.clone()).unwrap();
         assert_eq!(cc, dir.path().join(".claude.json"));
 
-        let desktop =
-            resolve_config_path(McpTarget::ClaudeDesktop, home_override.clone()).unwrap();
+        let desktop = resolve_config_path(McpTarget::ClaudeDesktop, home_override.clone()).unwrap();
         assert!(desktop.ends_with("claude_desktop_config.json"));
 
         let project = resolve_config_path(McpTarget::Project, None).unwrap();
@@ -465,17 +464,20 @@ mod tests {
         assert_eq!(val["mcpServers"]["existing_srv"]["command"], "node");
         // Yeni sunucu doğru mu?
         assert_eq!(val["mcpServers"]["new_srv"]["command"], "npx");
-        assert_eq!(
-            val["mcpServers"]["new_srv"]["args"],
-            json!(["-y", "pkg"])
-        );
+        assert_eq!(val["mcpServers"]["new_srv"]["args"], json!(["-y", "pkg"]));
         assert_eq!(val["mcpServers"]["new_srv"]["env"]["API_KEY"], "abc");
 
         // .bak oluşmuş olmalı
         assert!(cfg_path.with_extension("json.bak").exists());
 
         // mcp_toggle ile disable/enable
-        mcp_toggle("existing_srv", true, McpTarget::ClaudeCode, home_override.clone()).unwrap();
+        mcp_toggle(
+            "existing_srv",
+            true,
+            McpTarget::ClaudeCode,
+            home_override.clone(),
+        )
+        .unwrap();
         let val: Value = serde_json::from_str(&fs::read_to_string(&cfg_path).unwrap()).unwrap();
         assert_eq!(val["mcpServers"]["existing_srv"]["disabled"], true);
         assert_eq!(val["numStartups"], 3);
