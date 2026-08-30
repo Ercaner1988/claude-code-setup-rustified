@@ -158,6 +158,24 @@ pub enum Commands {
         home_dir: Option<String>,
     },
 
+    /// Add a new markdown note to the global memory knowledge base
+    MemoryNote {
+        #[arg(help = "Note title (used as # heading; kebab-case filename derived)")]
+        title: String,
+
+        #[arg(short, long, help = "Note body text")]
+        body: Option<String>,
+
+        #[arg(
+            long,
+            help = "Target directory override (default: <home>/claude_global_memory/knowledge)"
+        )]
+        dir: Option<String>,
+
+        #[arg(long, help = "Custom home directory override")]
+        home_dir: Option<String>,
+    },
+
     /// Install security & Git pre-commit branch protection hooks
     InstallHooks {
         #[arg(short, long, help = "Target repository path")]

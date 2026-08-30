@@ -80,6 +80,14 @@ fn main() -> Result<()> {
         Commands::MemoryRelated { note, home_dir } => {
             memory_engine::get_related_notes(&note, home_dir)?;
         }
+        Commands::MemoryNote {
+            title,
+            body,
+            dir,
+            home_dir,
+        } => {
+            memory_engine::add_memory_note(&title, body.as_deref(), dir, home_dir)?;
+        }
         Commands::InstallHooks { repo_dir } => {
             security::install_git_hooks(repo_dir)?;
         }
