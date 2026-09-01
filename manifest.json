@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "claude-code-setup",
   "display_name": "Claude Code Setup",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "MCP management, semantic memory engine, and security auditing for Claude Code environment setup.",
   "author": {
     "name": "Ercan ER",
@@ -50,6 +50,10 @@
     {
       "name": "memory_note",
       "description": "Add a semantic memory note with automatic embedding and knowledge graph linking"
+    },
+    {
+      "name": "memory_index",
+      "description": "Index global memory Markdown notes into the searchable database (run before memory_search)"
     },
     {
       "name": "memory_search",
