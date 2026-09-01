@@ -12,6 +12,26 @@ use crate::installer::get_home_dir;
 
 // ─── Yardımcılar ────────────────────────────────────────────────────────────
 
+/// FastEmbed model onbellegi. Varsayilan davranis onbellegi CALISMA DIZININE
+/// (./.fastembed_cache) acmaya calisir; MCP sunucusu olarak calisirken calisma
+/// dizini yazilamaz oluyor ve "Access denied (os error 5)" veriyordu. Sabit,
+/// ev dizinine bagli bir yol kullaniyoruz.
+pub fn embedding_cache_dir() -> Result<PathBuf> {
+    let dir = get_home_dir(None)?.join(".claude").join("fastembed_cache");
+    fs::create_dir_all(&dir)
+        .with_context(|| format!("Failed to create embedding cache dir {dir:?}"))?;
+    Ok(dir)
+}
+
+fn new_embedding_model(show_progress: bool) -> Result<TextEmbedding> {
+    TextEmbedding::try_new(
+        InitOptions::new(EmbeddingModel::MultilingualE5Small)
+            .with_cache_dir(embedding_cache_dir()?)
+            .with_show_download_progress(show_progress),
+    )
+    .context("Failed to initialise embedding model")
+}
+
 pub fn get_db_path(home_override: Option<String>) -> Result<PathBuf> {
     let home = get_home_dir(home_override)?;
     let claude_dir = home.join(".claude");
@@ -315,9 +335,7 @@ pub fn index_memory(
         "{}",
         "Generating embeddings via FastEmbed (Multilingual-E5-Small)...".blue()
     );
-    let model = TextEmbedding::try_new(
-        InitOptions::new(EmbeddingModel::MultilingualE5Small).with_show_download_progress(true),
-    )?;
+    let model = new_embedding_model(true)?;
 
     // B1: Chunking + mean-pool — ~1500 karakter pencereler
     let chunk_size: usize = 1500;
@@ -486,9 +504,7 @@ fn search_semantic_vec(
     limit: usize,
     min_score: f64,
 ) -> Result<Vec<SearchResult>> {
-    let model = TextEmbedding::try_new(
-        InitOptions::new(EmbeddingModel::MultilingualE5Small).with_show_download_progress(false),
-    )?;
+    let model = new_embedding_model(false)?;
 
     let query_emb = model.embed(vec![query.to_string()], None)?[0].clone();
 
@@ -792,5 +808,14 @@ mod tests {
             None,
         );
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn gomu_onbellegi_calisma_dizininden_bagimsiz() {
+        // Regresyon: fastembed varsayilani ./.fastembed_cache idi; MCP sunucusu
+        // olarak yazilamaz bir calisma dizininde "Access denied" veriyordu.
+        let dir = embedding_cache_dir().expect("onbellek dizini cozulemedi");
+        assert!(dir.is_absolute(), "onbellek yolu mutlak olmali: {dir:?}");
+        assert!(dir.ends_with("fastembed_cache"), "beklenmeyen yol: {dir:?}");
     }
 }

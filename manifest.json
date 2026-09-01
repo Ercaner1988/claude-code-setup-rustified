@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "claude-code-setup",
   "display_name": "Claude Code Setup",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "MCP management, semantic memory engine, and security auditing for Claude Code environment setup.",
   "author": {
     "name": "Ercan ER",

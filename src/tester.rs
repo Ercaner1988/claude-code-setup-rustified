@@ -79,11 +79,12 @@ pub fn run_tests(home_override: Option<String>) -> Result<()> {
 
     // Test 5: Embedding model cache
     print!("Testing embedding model cache... ");
-    let cache_candidates = [
-        home.join(".cache").join("fastembed"),
-        home.join(".cache").join("huggingface"),
-    ];
-    if cache_candidates.iter().any(|p| p.exists()) {
+    // Gercek onbellek yolu: <home>/.claude/fastembed_cache (bkz. memory_engine)
+    let cache_dir = home.join(".claude").join("fastembed_cache");
+    let cached = fs::read_dir(&cache_dir)
+        .map(|mut entries| entries.any(|e| e.is_ok()))
+        .unwrap_or(false);
+    if cached {
         println!("{}", "✓ Model cached locally".green());
     } else {
         println!(
