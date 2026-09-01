@@ -3,7 +3,7 @@
 # Usage: powershell -ExecutionPolicy Bypass -File install-windows.ps1
 
 param(
-    [string]$InstallDir = "$env:PROGRAMFILES\ClaudeCodeSetup",
+    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\ClaudeCodeSetup",
     [switch]$SkipConfig
 )
 
@@ -49,11 +49,6 @@ if ($pathEnv -notlike "*$InstallDir*") {
     $env:PATH += ";$InstallDir"
     Write-Host "✅ Added to PATH" -ForegroundColor Green
 }
-
-# Make executable
-Write-Host "🔐 Setting permissions..." -ForegroundColor Yellow
-icacls $exePath /grant:r "$env:USERNAME`:(F)" /inheritance:e /T | Out-Null
-Write-Host "✅ Executable set" -ForegroundColor Green
 
 # Run install command (optional config)
 if (-not $SkipConfig) {
