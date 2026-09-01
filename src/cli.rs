@@ -4,13 +4,18 @@ use crate::mcp::McpTarget;
 
 #[derive(Parser)]
 #[command(name = "claude-code-setup")]
+#[command(version)]
 #[command(about = "Bagimsiz Rust CLI: Claude Code ortam kurulumu, dinamik MCP yonetimi, semantik + graf hafiza motoru", long_about = None)]
 pub struct Cli {
-    #[arg(long, global = true, help = "Run as MCP server (stdin/stdout JSON-RPC protocol)")]
+    #[arg(
+        long,
+        global = true,
+        help = "Run as MCP server (stdin/stdout JSON-RPC protocol)"
+    )]
     pub mcp_mode: bool,
 
     #[command(subcommand)]
-    pub command: Commands,
+    pub command: Option<Commands>,
 }
 
 #[derive(Subcommand)]

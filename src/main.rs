@@ -9,7 +9,7 @@ mod security;
 mod tester;
 
 use anyhow::Result;
-use clap::Parser;
+use clap::{CommandFactory, Parser};
 use cli::{Cli, Commands};
 
 fn main() -> Result<()> {
@@ -20,7 +20,13 @@ fn main() -> Result<()> {
         return mcp_server::run_mcp_mode();
     }
 
-    match cli.command {
+    // ponytail: subcommand yoksa yardim bas, panik yerine
+    let Some(command) = cli.command else {
+        Cli::command().print_help()?;
+        return Ok(());
+    };
+
+    match command {
         Commands::Install {
             skip_prereqs,
             hooks,

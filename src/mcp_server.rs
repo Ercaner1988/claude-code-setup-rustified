@@ -188,7 +188,10 @@ fn list_tools(id: &serde_json::Value) -> serde_json::Value {
 }
 
 fn call_tool(id: &serde_json::Value, params: &serde_json::Value) -> serde_json::Value {
-    let tool_name = params.get("name").and_then(|v| v.as_str()).unwrap_or("unknown");
+    let tool_name = params
+        .get("name")
+        .and_then(|v| v.as_str())
+        .unwrap_or("unknown");
 
     let result = match tool_name {
         "mcp_list" => {
@@ -204,39 +207,42 @@ fn call_tool(id: &serde_json::Value, params: &serde_json::Value) -> serde_json::
             })
         }
         "security_audit" => {
-            let fix = params.get("arguments")
+            let fix = params
+                .get("arguments")
                 .and_then(|a| a.get("fix"))
                 .and_then(|f| f.as_bool())
                 .unwrap_or(false);
-            
+
             let cmd = if fix {
                 "claude-code-setup security-audit --fix"
             } else {
                 "claude-code-setup security-audit"
             };
-            
+
             json!({
                 "type": "text",
                 "text": format!("Run: {}", cmd)
             })
         }
         "memory_note" => {
-            let text = params.get("arguments")
+            let text = params
+                .get("arguments")
                 .and_then(|a| a.get("text"))
                 .and_then(|t| t.as_str())
                 .unwrap_or("");
-            
+
             json!({
                 "type": "text",
                 "text": format!("Add memory note: claude-code-setup memory-note \"{}\"", text)
             })
         }
         "memory_search" => {
-            let query = params.get("arguments")
+            let query = params
+                .get("arguments")
                 .and_then(|a| a.get("query"))
                 .and_then(|q| q.as_str())
                 .unwrap_or("");
-            
+
             json!({
                 "type": "text",
                 "text": format!("Search memory: claude-code-setup memory-search \"{}\"", query)
@@ -300,7 +306,13 @@ mod tests {
     fn test_initialize() {
         let id = json!(1);
         let resp = initialize(&id);
-        assert_eq!(resp.get("result").and_then(|r| r.get("serverInfo")).and_then(|s| s.get("name")).and_then(|n| n.as_str()), Some("claude-code-setup"));
+        assert_eq!(
+            resp.get("result")
+                .and_then(|r| r.get("serverInfo"))
+                .and_then(|s| s.get("name"))
+                .and_then(|n| n.as_str()),
+            Some("claude-code-setup")
+        );
     }
 
     #[test]
