@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "claude-code-setup",
   "display_name": "Claude Code Setup",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MCP management, semantic memory engine, and security auditing for Claude Code environment setup.",
   "author": {
     "name": "Ercan ER",
@@ -80,7 +80,7 @@
   "support": "https://github.com/Ercaner1988/claude-code-setup-rustified/issues",
   "tools_generated": false,
   "compatibility": {
-    "claude_code": ">=1.0.0",
+    "claude_desktop": ">=0.10.0",
     "platforms": [
       "win32",
       "darwin",

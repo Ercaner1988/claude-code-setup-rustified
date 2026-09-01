@@ -53,6 +53,10 @@ jobs:
         if: runner.os == 'Windows'
         run: python package-extension.py target/${{ matrix.target }}/release/claude-code-setup.exe claude-code-setup.mcpb
 
+      - name: Validate manifest against official MCPB schema
+        if: runner.os == 'Windows'
+        run: npx --yes @anthropic-ai/mcpb@latest validate manifest.json
+
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
