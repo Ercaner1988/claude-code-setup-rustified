@@ -52,7 +52,12 @@ def main() -> int:
     manifest["server"]["mcp_config"]["command"] = "${__dirname}/" + entry
     manifest.setdefault("compatibility", {})["platforms"] = [platform]
 
-    default_name = f"{manifest['name']}-{manifest['version']}-{platform}.mcpb"
+    # Dosya adinda platform KIMLIGINI kullanma: "win32" insan gozune
+    # "32 bit Windows" gibi gorunuyor ve kullanicilar 64 bit makinede
+    # yanlislikla baska platformun paketini seciyor. Adlar CI'in urettigi
+    # release dosya adlariyla da ayni olsun.
+    friendly = {"win32": "windows", "darwin": "macos", "linux": "linux"}
+    default_name = f"{manifest['name']}-{friendly.get(platform, platform)}.mcpb"
     out = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / default_name
 
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:

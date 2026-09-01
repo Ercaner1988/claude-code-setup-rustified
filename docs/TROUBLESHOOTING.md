@@ -8,6 +8,28 @@ Reinstall the CLI and make sure the npm global bin directory is on your PATH:
 npm install -g @anthropic-ai/claude-code
 ```
 
+## Claude Desktop, kurduğum eklenti için "bu paket bu platform için değil" diyor
+
+Her `.mcpb` paketi **tek bir işletim sistemi** içindir; içinde yalnızca o
+sistemin ikili dosyası vardır. Yanlış paketi kurarsan Claude Desktop uyarı
+verir ve eklenti çalışmaz.
+
+Son sürümden işletim sistemine uyanı indir:
+
+| İşletim sistemi | Dosya |
+|---|---|
+| Windows (32 ve 64 bit fark etmez) | `claude-code-setup-windows.mcpb` |
+| macOS | `claude-code-setup-macos.mcpb` |
+| Linux | `claude-code-setup-linux.mcpb` |
+
+Eski sürümlerde Windows paketinin adında `win32` geçiyordu. Bu "32 bit"
+demek değil — `win32`, Windows'un platform kimliğidir ve 64 bit makineler
+için de doğru dosyadır. Kafa karışıklığını önlemek için adlandırma
+`windows` olarak değiştirildi.
+
+Yanlış paketi kurduysan: Claude Desktop → Settings → Extensions'tan kaldır,
+doğru dosyayı sürükle.
+
 ## `memory-search` says "Memory database not found"
 
 Run `memory-index` first. The database lives at `~/.claude/memory_index.db`. If your notes are not in the default `~/claude_global_memory/knowledge` directory, pass `--source`:
