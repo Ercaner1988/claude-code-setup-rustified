@@ -40,7 +40,7 @@ echo -e "${CYAN}📦 Installing to: $INSTALL_DIR${NC}"
 # Fetch latest release
 echo -e "${YELLOW}📥 Fetching latest release...${NC}"
 API_RESPONSE=$(curl -s "https://api.github.com/repos/Ercaner1988/claude-code-setup-rustified/releases/latest")
-LATEST_TAG=$(echo "$API_RESPONSE" | grep -o '"tag_name":"[^"]*' | head -1 | cut -d'"' -f4)
+LATEST_TAG=$(echo "$API_RESPONSE" | grep -o '"tag_name": *"[^"]*' | head -1 | cut -d'"' -f4)
 
 if [[ -z "$LATEST_TAG" ]]; then
     echo -e "${RED}❌ Could not fetch latest release${NC}"
@@ -49,15 +49,27 @@ fi
 
 echo -e "${GREEN}   Found: $LATEST_TAG${NC}"
 
-# Find macOS x64 asset
-MACOS_URL=$(echo "$API_RESPONSE" | grep -o '"browser_download_url":"[^"]*macos-x86_64[^"]*' | head -1 | cut -d'"' -f4)
+# Pick the asset for THIS operating system. Bu betik hem macOS hem Linux icin
+# kullaniliyor; macOS ikilisini sabitlemek Linux'ta "cannot execute binary
+# file" hatasi veriyordu.
+case "$(uname -s)" in
+    Darwin) ASSET_MARKER="macos-x86_64"; OS_LABEL="macOS" ;;
+    Linux)  ASSET_MARKER="linux-x86_64"; OS_LABEL="Linux" ;;
+    *)
+        echo "Unsupported operating system: $(uname -s)"
+        echo "Supported: macOS, Linux. On Windows use install-windows.ps1."
+        exit 1
+        ;;
+esac
 
-if [[ -z "$MACOS_URL" ]]; then
-    echo -e "${RED}❌ macOS x64 binary not found in release${NC}"
+DOWNLOAD_URL=$(echo "$API_RESPONSE" | grep -o "\"browser_download_url\": *\"[^\"]*${ASSET_MARKER}[^\"]*" | head -1 | cut -d'"' -f4)
+
+if [[ -z "$DOWNLOAD_URL" ]]; then
+    echo "${OS_LABEL} x64 binary not found in release"
     exit 1
 fi
 
-BINARY_NAME=$(basename "$MACOS_URL")
+BINARY_NAME=$(basename "$DOWNLOAD_URL")
 echo -e "${GREEN}   Binary: $BINARY_NAME${NC}"
 
 # Create install directory
@@ -67,7 +79,7 @@ echo -e "${GREEN}✅ Created directory: $INSTALL_DIR${NC}"
 # Download binary
 BINARY_PATH="$INSTALL_DIR/claude-code-setup"
 echo -e "${YELLOW}⬇️  Downloading binary...${NC}"
-curl -L "$MACOS_URL" -o "$BINARY_PATH"
+curl -L "$DOWNLOAD_URL" -o "$BINARY_PATH"
 echo -e "${GREEN}✅ Downloaded: $BINARY_PATH${NC}"
 
 # Make executable

@@ -6,31 +6,52 @@ Bu kılavuz, bilgisayarında **Rust veya teknik araçlar kurulu olmayan kullanı
 
 ---
 
-## 🚀 HIZLI BAŞLANGIÇ: Claude Code Extension
+## 🚀 HIZLI BAŞLANGIÇ
 
-### En Kolay Yol - Extension Installer
+Aracı kullanmanın iki yolu var. İkisi birbirinin alternatifi — ikisini de kurmak zorunda değilsin.
+
+### Yol 1 — Claude Desktop eklentisi (önerilen)
+
+Tek dosya indir, sürükle, bitti. Rust, terminal, PATH derdi yok.
+
+1. [Son sürüm sayfasından](https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest) işletim sistemine uyan paketi indir:
+   - **Windows** → `claude-code-setup-windows.mcpb`
+   - **macOS** → `claude-code-setup-macos.mcpb`
+   - **Linux** → `claude-code-setup-linux.mcpb`
+2. Claude Desktop → **Settings → Extensions** ekranını aç.
+3. İndirdiğin `.mcpb` dosyasını bu ekrana **sürükleyip bırak**.
+4. Claude Desktop eklentiyi kurar ve 8 aracı kullanıma açar.
+
+> Paketler platforma özeldir: her biri yalnızca kendi işletim sisteminin
+> ikili dosyasını taşır. Yanlış paketi kurarsan eklenti yüklenir ama çalışmaz.
+
+### Yol 2 — Komut satırı aracı (CLI)
+
+Terminalden `claude-code-setup ...` komutlarını çalıştırmak istiyorsan.
 
 #### Windows (PowerShell)
 ```powershell
-powershell -ExecutionPolicy Bypass -File install-windows.ps1
+irm https://raw.githubusercontent.com/Ercaner1988/claude-code-setup-rustified/main/install-windows.ps1 | iex
 ```
 
-#### macOS (Terminal)
+#### macOS / Linux (Terminal)
 ```bash
-bash install-macos.sh
+curl -fsSL https://raw.githubusercontent.com/Ercaner1988/claude-code-setup-rustified/main/install-macos.sh | bash
 ```
 
-**Yapacakları:**
-1. ✅ Latest release'i GitHub'dan indir
-2. ✅ Sisteme kur
-3. ✅ PATH'e ekle  
-4. ✅ Claude Code extension'ı register et
-5. ✅ MCP konfigürasyonu hazırla
+**Kurucunun yaptıkları:**
+1. ✅ Son sürümün ikili dosyasını GitHub'dan indirir
+2. ✅ Kullanıcı dizinine kurar (yönetici yetkisi gerekmez)
+3. ✅ PATH'e ekler
 
-**Sonra:**
-1. Claude Code Desktop → Settings → Extensions
-2. "claude-code-setup" arayın
-3. Araçları configure et ve kullan
+**Kurucunun YAPMADIĞI:** Claude Desktop eklentisini kaydetmez. Eklenti için
+Yol 1'i kullan — ikisi ayrı şeylerdir.
+
+**Doğrulama** (yeni bir terminal penceresi aç, PATH değişikliği eskilerine yansımaz):
+```bash
+claude-code-setup --version
+claude-code-setup status
+```
 
 ---
 

@@ -1,0 +1,187 @@
+{
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\install-macos.sh": {
+    "mtime": 1788263724.1918478,
+    "ast_hash": "1a25c34801dd507d64230b26e14d1554",
+    "semantic_hash": "1a25c34801dd507d64230b26e14d1554"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\install-windows.ps1": {
+    "mtime": 1788277132.276436,
+    "ast_hash": "c51c689c1530ad86d5cd50f2bde40a26",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\manifest.json": {
+    "mtime": 1788275443.5079112,
+    "ast_hash": "ffe51d0b697555e3ffdb065da0e96691",
+    "semantic_hash": "ffe51d0b697555e3ffdb065da0e96691"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\package-extension.py": {
+    "mtime": 1788269587.643928,
+    "ast_hash": "feeaafe2b1e8be9f762df5a49a8c2fef",
+    "semantic_hash": "feeaafe2b1e8be9f762df5a49a8c2fef"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\agent.rs": {
+    "mtime": 1788251602.809606,
+    "ast_hash": "5dc5ccf2f538908a5f7e9ea67f27d16e",
+    "semantic_hash": "5dc5ccf2f538908a5f7e9ea67f27d16e"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\branch_manager.rs": {
+    "mtime": 1788251602.8108654,
+    "ast_hash": "857411094cd69ea9e29248b7ef9b4df9",
+    "semantic_hash": "857411094cd69ea9e29248b7ef9b4df9"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\cli.rs": {
+    "mtime": 1788267823.548366,
+    "ast_hash": "e6a47b1985b6823db1aef9b552647488",
+    "semantic_hash": "e6a47b1985b6823db1aef9b552647488"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\installer.rs": {
+    "mtime": 1788269640.850771,
+    "ast_hash": "5db6bdb895f0df74211fa8fec43f01c6",
+    "semantic_hash": "5db6bdb895f0df74211fa8fec43f01c6"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\main.rs": {
+    "mtime": 1788267812.394887,
+    "ast_hash": "8687578f2d27e223c73612d89e2b31be",
+    "semantic_hash": "8687578f2d27e223c73612d89e2b31be"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\mcp.rs": {
+    "mtime": 1788251602.8150387,
+    "ast_hash": "98b23c4a8e38d50647f451b58c3576f2",
+    "semantic_hash": "98b23c4a8e38d50647f451b58c3576f2"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\mcp_server.rs": {
+    "mtime": 1788277133.2527707,
+    "ast_hash": "3cb2439369e2103852ee4c9c84bdabbb",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\memory_engine.rs": {
+    "mtime": 1788275443.197904,
+    "ast_hash": "50aabdda6e12a01b8161b1bbc09d5dd2",
+    "semantic_hash": "50aabdda6e12a01b8161b1bbc09d5dd2"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\security.rs": {
+    "mtime": 1788269688.412763,
+    "ast_hash": "06f2a0f6d26d3773ad74262d1e947c03",
+    "semantic_hash": "06f2a0f6d26d3773ad74262d1e947c03"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\src\\tester.rs": {
+    "mtime": 1788275340.119396,
+    "ast_hash": "2fd22cc3a6e9874ab8e87e02d8f149a2",
+    "semantic_hash": "2fd22cc3a6e9874ab8e87e02d8f149a2"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\.github\\workflows\\release.yml": {
+    "mtime": 1788270760.330058,
+    "ast_hash": "662066d25f6134f3db6320948165ed1d",
+    "semantic_hash": "662066d25f6134f3db6320948165ed1d"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\.github\\workflows\\rust.yml": {
+    "mtime": 1788251602.7939405,
+    "ast_hash": "8171c807284b83c04ee5591076fa6d11",
+    "semantic_hash": "8171c807284b83c04ee5591076fa6d11"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\DEPLOYMENT_GUIDE.md": {
+    "mtime": 1788267229.6951745,
+    "ast_hash": "fbbb095ca3c4ae247c62d2d46cfe7530",
+    "semantic_hash": "fbbb095ca3c4ae247c62d2d46cfe7530"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.ar.md": {
+    "mtime": 1788265208.2369132,
+    "ast_hash": "50c591c8a552f7c76dfe5a5ca3bf2231",
+    "semantic_hash": "50c591c8a552f7c76dfe5a5ca3bf2231"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.en.md": {
+    "mtime": 1788265197.7406414,
+    "ast_hash": "ea33ebfe44bb8cfa29601fe82fd10ba9",
+    "semantic_hash": "ea33ebfe44bb8cfa29601fe82fd10ba9"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.es.md": {
+    "mtime": 1788265257.72783,
+    "ast_hash": "2e92c1739946552b760f67bad4f5df79",
+    "semantic_hash": "2e92c1739946552b760f67bad4f5df79"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.ja.md": {
+    "mtime": 1788265218.3827796,
+    "ast_hash": "4f72eaf49d8dbab7be5ad4ed9ebdae3d",
+    "semantic_hash": "4f72eaf49d8dbab7be5ad4ed9ebdae3d"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.md": {
+    "mtime": 1788267214.2970717,
+    "ast_hash": "1bf74d2e3547992062cb8e00414e72f5",
+    "semantic_hash": "1bf74d2e3547992062cb8e00414e72f5"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.ru.md": {
+    "mtime": 1788265246.6295767,
+    "ast_hash": "d2eabac12f2380b01d0980c98d33b748",
+    "semantic_hash": "d2eabac12f2380b01d0980c98d33b748"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.tr.md": {
+    "mtime": 1788265789.2003343,
+    "ast_hash": "62da0268459ee9f1755349a2e2a20925",
+    "semantic_hash": "62da0268459ee9f1755349a2e2a20925"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\INSTALLATION.zh.md": {
+    "mtime": 1788265232.8914268,
+    "ast_hash": "aea6e4c7b4e651c8e3e92f6103fcb92d",
+    "semantic_hash": "aea6e4c7b4e651c8e3e92f6103fcb92d"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.ar.md": {
+    "mtime": 1788251602.8001108,
+    "ast_hash": "2f6f480b80875786a48c0da877e730c1",
+    "semantic_hash": "2f6f480b80875786a48c0da877e730c1"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.en.md": {
+    "mtime": 1788251602.801431,
+    "ast_hash": "636034c87833e8ecb188b12a96243233",
+    "semantic_hash": "636034c87833e8ecb188b12a96243233"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.es.md": {
+    "mtime": 1788251602.801431,
+    "ast_hash": "8b9ecb4e546b6f37b743c63efda029bb",
+    "semantic_hash": "8b9ecb4e546b6f37b743c63efda029bb"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.ja.md": {
+    "mtime": 1788251602.8028214,
+    "ast_hash": "76407d35d6cda47c3039a869240b0835",
+    "semantic_hash": "76407d35d6cda47c3039a869240b0835"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.md": {
+    "mtime": 1788267163.3776855,
+    "ast_hash": "1c70b0723e03db5baaf5a2e2dd0c1e62",
+    "semantic_hash": "1c70b0723e03db5baaf5a2e2dd0c1e62"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.ru.md": {
+    "mtime": 1788251602.8042445,
+    "ast_hash": "433d6132572c856ee45507a549d36672",
+    "semantic_hash": "433d6132572c856ee45507a549d36672"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.tr.md": {
+    "mtime": 1788251602.805244,
+    "ast_hash": "c21a8db35592160ebdbbb5ab3d572d89",
+    "semantic_hash": "c21a8db35592160ebdbbb5ab3d572d89"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\README.zh.md": {
+    "mtime": 1788251602.8062446,
+    "ast_hash": "ef950d0b3a70e304ec48179ad80fdd68",
+    "semantic_hash": "ef950d0b3a70e304ec48179ad80fdd68"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\docs\\MANUAL_SETUP.md": {
+    "mtime": 1788251602.8075612,
+    "ast_hash": "fe52253ac2bd133ae50bf3d1e78f238b",
+    "semantic_hash": "fe52253ac2bd133ae50bf3d1e78f238b"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\docs\\TROUBLESHOOTING.md": {
+    "mtime": 1788251602.8075612,
+    "ast_hash": "56800b3844329099618b5dc0378e16f1",
+    "semantic_hash": "56800b3844329099618b5dc0378e16f1"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\docs\\dev\\TASK-KASSAM-1-2.md": {
+    "mtime": 1788251602.8086088,
+    "ast_hash": "9360a7d5bfec68096f5e46a2735a5241",
+    "semantic_hash": "9360a7d5bfec68096f5e46a2735a5241"
+  },
+  "C:\\Users\\buzbe\\Desktop\\Github\\claude-code-setup-rustified\\icon.png": {
+    "mtime": 1788270634.0278947,
+    "ast_hash": "d5f9a2d457a84205e26bd7472a00f5a6",
+    "semantic_hash": "d5f9a2d457a84205e26bd7472a00f5a6"
+  }
+}
