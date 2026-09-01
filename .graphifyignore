@@ -1,0 +1,19 @@
+# Cevirisi olan dosyalar neredeyse birebir ayni dugumleri uretiyor;
+# kanonik olanlari (README.md, INSTALLATION.md) tutup gerisini disliyoruz.
+README.ar.md
+README.en.md
+README.es.md
+README.ja.md
+README.ru.md
+README.tr.md
+README.zh.md
+INSTALLATION.ar.md
+INSTALLATION.en.md
+INSTALLATION.es.md
+INSTALLATION.ja.md
+INSTALLATION.ru.md
+INSTALLATION.tr.md
+INSTALLATION.zh.md
+
+# Grafin kendi ciktisi
+graphify-out/
