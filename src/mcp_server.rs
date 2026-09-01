@@ -71,7 +71,7 @@ fn initialize(id: &serde_json::Value) -> serde_json::Value {
             },
             "serverInfo": {
                 "name": "claude-code-setup",
-                "version": "0.1.0"
+                "version": env!("CARGO_PKG_VERSION")
             }
         }
     })

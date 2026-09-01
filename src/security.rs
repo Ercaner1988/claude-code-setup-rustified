@@ -53,7 +53,8 @@ pub fn find_secrets(text: &str) -> Vec<(String, String)> {
     findings
 }
 
-pub fn install_git_hooks(repo_dir: Option<String>) -> Result<()> {
+/// Kanca kurulduysa `true`. Depo degilse `false` (hata degil, ama basari da degil).
+pub fn install_git_hooks(repo_dir: Option<String>) -> Result<bool> {
     let target_dir = if let Some(dir) = repo_dir {
         PathBuf::from(dir)
     } else {
@@ -69,7 +70,7 @@ pub fn install_git_hooks(repo_dir: Option<String>) -> Result<()> {
             git_hooks_dir
         );
         println!("Ensure this is a valid Git repository root.");
-        return Ok(());
+        return Ok(false);
     }
 
     let pre_commit_path = git_hooks_dir.join("pre-commit");
@@ -81,7 +82,7 @@ pub fn install_git_hooks(repo_dir: Option<String>) -> Result<()> {
         pre_commit_path
     );
 
-    Ok(())
+    Ok(true)
 }
 
 /// Unix'te dosya iznini 600 yapar; başka platformlarda no-op.

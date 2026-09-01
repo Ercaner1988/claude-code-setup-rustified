@@ -121,18 +121,29 @@ pub fn run_install(skip_prereqs: bool, hooks: bool, home_override: Option<String
         log_warning("No .env.example found in repository root");
     }
 
-    if hooks {
+    let hooks_installed = if hooks {
         log_info("Installing pre-commit security hooks into current repository...");
-        crate::security::install_git_hooks(None)?;
-    }
+        crate::security::install_git_hooks(None)?
+    } else {
+        true
+    };
 
     println!("========================================");
-    println!(
-        "{}",
-        "✅ Setup completed successfully via Rust engine!"
-            .green()
-            .bold()
-    );
+    if hooks_installed {
+        println!(
+            "{}",
+            "✅ Setup completed successfully via Rust engine!"
+                .green()
+                .bold()
+        );
+    } else {
+        println!(
+            "{}",
+            "⚠ Setup finished, but --hooks was skipped: run it from a Git repository root."
+                .yellow()
+                .bold()
+        );
+    }
 
     Ok(())
 }

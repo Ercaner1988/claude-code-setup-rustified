@@ -1,6 +1,6 @@
 [package]
 name = "claude-code-setup"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Ercan ER <ercaner1988@gmail.com>", "Kassam <agent@hermes.local>"]
 description = "Bagimsiz Rust CLI: Claude Code ortam denetimi, dinamik MCP yonetimi, semantik + graf hafiza motoru"

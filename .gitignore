@@ -45,3 +45,6 @@ target/
 # User-specific configurations
 claude_desktop_config.json.local
 settings.local.json
+
+# Uretilen eklenti paketi
+*.mcpb

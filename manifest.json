@@ -2,19 +2,20 @@
   "manifest_version": "0.3",
   "name": "claude-code-setup",
   "display_name": "Claude Code Setup",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "MCP management, semantic memory engine, and security auditing for Claude Code environment setup.",
   "author": {
     "name": "Ercan ER",
     "url": "https://github.com/Ercaner1988"
   },
   "server": {
-    "type": "executable",
-    "command": "${__dirname}/claude-code-setup.exe",
-    "args": ["--mcp-mode"],
+    "type": "binary",
+    "entry_point": "claude-code-setup.exe",
     "mcp_config": {
       "command": "${__dirname}/claude-code-setup.exe",
-      "args": ["--mcp-mode"]
+      "args": [
+        "--mcp-mode"
+      ]
     }
   },
   "icon": "icon.png",
