@@ -6,6 +6,9 @@ use crate::mcp::McpTarget;
 #[command(name = "claude-code-setup")]
 #[command(about = "Bagimsiz Rust CLI: Claude Code ortam kurulumu, dinamik MCP yonetimi, semantik + graf hafiza motoru", long_about = None)]
 pub struct Cli {
+    #[arg(long, global = true, help = "Run as MCP server (stdin/stdout JSON-RPC protocol)")]
+    pub mcp_mode: bool,
+
     #[command(subcommand)]
     pub command: Commands,
 }

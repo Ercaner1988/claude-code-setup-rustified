@@ -3,6 +3,7 @@ mod branch_manager;
 mod cli;
 mod installer;
 mod mcp;
+mod mcp_server;
 mod memory_engine;
 mod security;
 mod tester;
@@ -13,6 +14,11 @@ use cli::{Cli, Commands};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
+
+    // MCP mode: stdin/stdout JSON-RPC protocol
+    if cli.mcp_mode {
+        return mcp_server::run_mcp_mode();
+    }
 
     match cli.command {
         Commands::Install {

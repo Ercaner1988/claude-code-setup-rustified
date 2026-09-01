@@ -17,6 +17,8 @@ serde_json = "1.0"
 rusqlite = { version = "0.31", features = ["bundled"] }
 fastembed = { version = "4.9", default-features = false, features = ["hf-hub-rustls-tls", "ort-download-binaries"] }
 regex = "1.10"
+tokio = { version = "1", features = ["full"] }
+uuid = { version = "1.6", features = ["v4", "serde"] }
 
 [dev-dependencies]
 tempfile = "3.8"
