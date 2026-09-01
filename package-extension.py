@@ -63,7 +63,15 @@ def main() -> int:
                 z.write(path, name)
             else:
                 print(f"UYARI: atlandi (yok): {name}")
-        z.write(binary, entry)
+        # Ikiliyi calistirilabilir modla yaz. zipfile.write() ana makinenin
+        # dosya modunu kopyalar; Windows'ta paketlenince Unix exec biti
+        # kayboluyor (mod 0o666) ve paket macOS/Linux'ta "permission denied"
+        # ile aciliyordu. Modu paketleyen isletim sisteminden bagimsiz sabitle.
+        info = zipfile.ZipInfo(entry)
+        info.compress_type = zipfile.ZIP_DEFLATED
+        info.create_system = 3  # Unix
+        info.external_attr = 0o755 << 16
+        z.writestr(info, binary.read_bytes())
 
     size = out.stat().st_size / 1_048_576
     print(f"OK: {out}  ({size:.1f} MB, platform={platform}, entry_point={entry})")
