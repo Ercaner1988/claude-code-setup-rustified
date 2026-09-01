@@ -2,7 +2,7 @@
 
 # Claude Code Bağımsız Kurulum Kılavuzu (%100 Rust Motoru)
 
-Bu kılavuz, **Claude Code** ortamınızı yöneten **%100 Rust tabanlı** yerel CLI aracını (`claude-code-setup`) farklı platformlarda adım adım nasıl kuracağınızı ve yapılandıracağınızı anlatır.
+Bu kılavuz, hiç komut satırı deneyimi olmayan kullanıcılar dahil herkesin **Claude Code Setup** (`claude-code-setup`) aracını saniyeler içinde bilgisayarına kurup çalıştırabilmesi için adım adım hazırlanmıştır.
 
 ---
 
@@ -14,48 +14,57 @@ Bu kılavuz, **Claude Code** ortamınızı yöneten **%100 Rust tabanlı** yerel
 
 ---
 
-## 📥 2. Yöntem 1: Hazır İkili Dosya İndirme (Tavsiye Edilen)
+## 📥 2. Adım Adım Kurulum (Yeni Başlayanlar İçin)
 
-GitHub Release sayfasından platformunuza uygun ikili dosyayı doğrudan indirebilirsiniz.
+### 🪟 Windows Kullanıcıları İçin (Adım Adım)
 
-### Windows (x64)
-PowerShell üzerinden doğrudan çalıştırılabilir ikili dosyayı indirin:
+1. **PowerShell'i Açın:**
+   - Klavyenizden **`Windows Tuşu + R`** kombinasyonuna basın (Çalıştır penceresi açılır).
+   - Kutucuğa `powershell` yazıp **Enter** tuşuna basın. (Mavi renkli komut penceresi açılacaktır).
+
+2. **Tek Satırlık Kurulum Komutunu Yapıştırın:**
+   - Aşağıdaki gri kutunun sağındaki kopyala butonuna tıklayın veya metni seçip kopyalayın.
+   - Açılan mavi PowerShell penceresine **sağ tıklayarak yapıştırın** ve **Enter**'a basın:
+
 ```powershell
-# Sürüm ikili dosyasını indirin
-Invoke-WebRequest -Uri "https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-windows-x86_64.exe" -OutFile "claude-code-setup.exe"
-
-# Otomatik ortam ve hafıza kurulumunu başlatın
-.\claude-code-setup.exe install --hooks
+Invoke-WebRequest -Uri "https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-windows-x86_64.exe" -OutFile "claude-code-setup.exe"; .\claude-code-setup.exe install --hooks
 ```
 
-### Linux (x64)
-Terminal üzerinden doğrudan indirin ve çalıştırma izni verin:
+3. **Tamamlandı!**
+   - Kurulum aracı otomatik olarak çalışacak, dizin yapısını (`~/claude_global_memory/knowledge`) kuracak ve ortamı doğrulayacaktır.
+
+---
+
+### 🍏 macOS Kullanıcıları İçin (Adım Adım)
+
+1. **Terminal'i Açın:**
+   - Klavyenizden **`Cmd (⌘) + Space`** tuşlarına basarak Spotlight aramasını açın.
+   - `Terminal` yazıp **Enter** tuşuna basın.
+
+2. **Kurulum Komutunu Yapıştırın ve Çalıştırın:**
+   - Aşağıdaki komutu kopyalayın, Terminal penceresine yapıştırıp **Enter** tuşuna basın:
+
 ```bash
-# İkili dosyayı indirin
-curl -LO https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-linux-x86_64
-
-# Çalıştırma izni verin
-chmod +x claude-code-setup-linux-x86_64
-
-# Kurulumu koşturun
-./claude-code-setup-linux-x86_64 install --hooks
-```
-
-### macOS (x64)
-```bash
-# İkili dosyayı indirin
-curl -LO https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-macos-x86_64
-
-# Çalıştırma izni verin
-chmod +x claude-code-setup-macos-x86_64
-
-# Kurulumu koşturun
-./claude-code-setup-macos-x86_64 install --hooks
+curl -LO https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-macos-x86_64 && chmod +x claude-code-setup-macos-x86_64 && ./claude-code-setup-macos-x86_64 install --hooks
 ```
 
 ---
 
-## 🛠️ 3. Yöntem 2: Kaynak Koddan Derleme (Cargo)
+### 🐧 Linux Kullanıcıları İçin (Adım Adım)
+
+1. **Terminal'i Açın:**
+   - Klavyenizden **`Ctrl + Alt + T`** kısayoluna basın veya uygulama menüsünden **Terminal**'i seçin.
+
+2. **Kurulum Komutunu Yapıştırın ve Çalıştırın:**
+   - Aşağıdaki komutu yapıştırıp **Enter** tuşuna basın:
+
+```bash
+curl -LO https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-linux-x86_64 && chmod +x claude-code-setup-linux-x86_64 && ./claude-code-setup-linux-x86_64 install --hooks
+```
+
+---
+
+## 🛠️ 3. Geliştiriciler İçin: Kaynak Koddan Derleme (Cargo)
 
 Bilgisayarınızda Rust ortamı (`cargo` 1.80+) kuruluysa kaynak koddan derleyebilirsiniz:
 
@@ -71,17 +80,11 @@ cargo build --release
 ./target/release/claude-code-setup install --hooks
 ```
 
-Sisteminize küresel olarak yüklemek isterseniz:
-```bash
-cargo install --path .
-claude-code-setup install --hooks
-```
-
 ---
 
 ## ⚙️ 4. Kurulum Sonrası Doğrulama ve Tanı
 
-Kurulum tamamlandıktan sonra ortam tanı durumunu kontrol edin:
+Kurulum tamamlandıktan sonra ortam tanı durumunu kontrol etmek için komut pencerenize yazabilirsiniz:
 
 ```bash
 # Sistem tanılamasını koşturun
