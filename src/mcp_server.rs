@@ -1,12 +1,8 @@
 use serde_json::json;
 use std::io::{self, BufRead, Write};
 
-#[derive(Debug)]
-pub struct McpServer;
-
 #[derive(Debug, serde::Deserialize)]
 pub struct JsonRpcRequest {
-    pub jsonrpc: String,
     pub id: serde_json::Value,
     pub method: String,
     #[serde(default)]

@@ -67,29 +67,32 @@ claude-code-complete-setup/
 
 ## 🚀 3. Kurulum ve Yapılandırma
 
-### Hızlı Başlangıç: Claude Code Extension
+### Hızlı Başlangıç
 
-#### Windows x64
+İki ayrı kurulum var; hangisini istediğine karar ver.
+
+**Claude Desktop eklentisi (önerilen)** — [son sürümden](https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest) işletim sistemine uyan paketi indir, Claude Desktop → Settings → Extensions ekranına sürükle:
+
+| İşletim sistemi | Dosya |
+|---|---|
+| Windows | `claude-code-setup-windows.mcpb` |
+| macOS | `claude-code-setup-macos.mcpb` |
+| Linux | `claude-code-setup-linux.mcpb` |
+
+**Komut satırı aracı** — terminalden kullanmak istersen:
+
 ```powershell
-powershell -ExecutionPolicy Bypass -File install-windows.ps1
+irm https://raw.githubusercontent.com/Ercaner1988/claude-code-setup-rustified/main/install-windows.ps1 | iex
 ```
 
-#### macOS x64
 ```bash
-bash install-macos.sh
+curl -fsSL https://raw.githubusercontent.com/Ercaner1988/claude-code-setup-rustified/main/install-macos.sh | bash
 ```
 
-Installerlar otomatik olarak:
-1. Latest release'i indir
-2. Sisteme kur
-3. PATH'e ekle
-4. MCP yapılandırması yap
-5. Claude Code extension'ı register et
+Kurucu ikili dosyayı kullanıcı dizinine kurup PATH'e ekler (yönetici yetkisi
+gerekmez). Eklentiyi **kaydetmez** — eklenti için yukarıdaki `.mcpb` yolunu
+kullan. Doğrulama için yeni bir terminalde `claude-code-setup status`.
 
-👉 **Ardından:**
-- Claude Code Desktop → Settings → Extensions
-- "claude-code-setup" arayın
-- "Configure" tıklayıp araçları gördüğünü doğrula
 
 Detaylı kurulum için bkz. [INSTALLATION.md](INSTALLATION.md)
 

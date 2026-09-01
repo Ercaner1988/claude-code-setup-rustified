@@ -48,3 +48,6 @@ settings.local.json
 
 # Uretilen eklenti paketi
 *.mcpb
+
+# graphify bilgi grafi ciktilari
+graphify-out/

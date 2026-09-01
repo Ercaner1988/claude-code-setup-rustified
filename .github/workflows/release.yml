@@ -19,12 +19,15 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             asset: claude-code-setup-linux-x86_64
+            mcpb: claude-code-setup-linux.mcpb
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             asset: claude-code-setup-windows-x86_64.exe
+            mcpb: claude-code-setup-windows.mcpb
           - os: macos-latest
             target: x86_64-apple-darwin
             asset: claude-code-setup-macos-x86_64
+            mcpb: claude-code-setup-macos.mcpb
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -38,6 +41,12 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
+      # ubuntu-latest'te `python` komutu yok, yalnizca `python3`.
+      # setup-python her platformda `python` saglar.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
@@ -49,17 +58,15 @@ jobs:
         if: runner.os == 'Windows'
         run: Copy-Item target/${{ matrix.target }}/release/claude-code-setup.exe ${{ matrix.asset }}
 
-      - name: Package Claude Desktop extension (Windows)
-        if: runner.os == 'Windows'
-        run: python package-extension.py target/${{ matrix.target }}/release/claude-code-setup.exe claude-code-setup.mcpb
-
       - name: Validate manifest against official MCPB schema
-        if: runner.os == 'Windows'
         run: npx --yes @anthropic-ai/mcpb@latest validate manifest.json
+
+      - name: Package Claude Desktop extension
+        run: python package-extension.py ${{ matrix.asset }} ${{ matrix.mcpb }}
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             ${{ matrix.asset }}
-            ${{ runner.os == 'Windows' && 'claude-code-setup.mcpb' || '' }}
+            ${{ matrix.mcpb }}

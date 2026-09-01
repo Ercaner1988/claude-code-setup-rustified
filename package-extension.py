@@ -2,7 +2,12 @@
 """Claude Desktop eklenti paketi (.mcpb) uretir.
 
 Kullanim: python package-extension.py <binary-yolu> [cikti.mcpb]
-.mcpb = manifest.json'u kokunde tutan bir ZIP arsivi.
+
+.mcpb = manifest.json'u kokunde tutan bir ZIP arsivi. Paket tek bir ikili
+dosya tasiyor, dolayisiyla tek bir platforma aittir: manifest'in
+entry_point'i ve compatibility.platforms alani verilen binary'ye gore
+yeniden yazilir. Aksi halde paket uc platformu destekledigini iddia edip
+icinde yalnizca Windows exe'si tasir ve Mac'te bozuk kurulur.
 """
 import json
 import pathlib
@@ -10,7 +15,23 @@ import sys
 import zipfile
 
 ROOT = pathlib.Path(__file__).parent
-EXTRAS = ["manifest.json", "icon.png", "README.md", "LICENSE"]
+EXTRAS = ["icon.png", "README.md", "LICENSE"]
+
+# binary adindaki platform imi -> manifest platform kimligi
+PLATFORM_BY_SUFFIX = {
+    "windows": "win32",
+    "macos": "darwin",
+    "linux": "linux",
+}
+
+
+def platform_of(binary: pathlib.Path) -> str:
+    name = binary.name.lower()
+    for marker, platform in PLATFORM_BY_SUFFIX.items():
+        if marker in name:
+            return platform
+    # Yerel derlemeler (target/release/...) icin uzantiya gore tahmin et
+    return "win32" if binary.suffix == ".exe" else sys.platform
 
 
 def main() -> int:
@@ -24,10 +45,18 @@ def main() -> int:
         return 1
 
     manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
-    entry = manifest["server"]["entry_point"]
-    out = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / f"{manifest['name']}-{manifest['version']}.mcpb"
+    platform = platform_of(binary)
+    entry = "claude-code-setup.exe" if platform == "win32" else "claude-code-setup"
+
+    manifest["server"]["entry_point"] = entry
+    manifest["server"]["mcp_config"]["command"] = "${__dirname}/" + entry
+    manifest.setdefault("compatibility", {})["platforms"] = [platform]
+
+    default_name = f"{manifest['name']}-{manifest['version']}-{platform}.mcpb"
+    out = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / default_name
 
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("manifest.json", json.dumps(manifest, indent=2, ensure_ascii=False))
         for name in EXTRAS:
             path = ROOT / name
             if path.is_file():
@@ -36,7 +65,8 @@ def main() -> int:
                 print(f"UYARI: atlandi (yok): {name}")
         z.write(binary, entry)
 
-    print(f"OK: {out}  ({out.stat().st_size / 1_048_576:.1f} MB, entry_point={entry})")
+    size = out.stat().st_size / 1_048_576
+    print(f"OK: {out}  ({size:.1f} MB, platform={platform}, entry_point={entry})")
     return 0
 
 
