@@ -67,10 +67,40 @@ claude-code-complete-setup/
 
 ## 🚀 3. Kurulum ve Yapılandırma
 
-### Gereksinimler
+### Hızlı Başlangıç: Claude Code Extension
+
+#### Windows x64
+```powershell
+powershell -ExecutionPolicy Bypass -File install-windows.ps1
+```
+
+#### macOS x64
+```bash
+bash install-macos.sh
+```
+
+Installerlar otomatik olarak:
+1. Latest release'i indir
+2. Sisteme kur
+3. PATH'e ekle
+4. MCP yapılandırması yap
+5. Claude Code extension'ı register et
+
+👉 **Ardından:**
+- Claude Code Desktop → Settings → Extensions
+- "claude-code-setup" arayın
+- "Configure" tıklayıp araçları gördüğünü doğrula
+
+Detaylı kurulum için bkz. [INSTALLATION.md](INSTALLATION.md)
+
+---
+
+### Manuel Kurulum: Kaynaktan Derleme
+
+#### Gereksinimler
 - **Rust Toolchain:** `rustc` ve `cargo` (1.80+)
 
-### Derleme
+#### Derleme
 ```bash
 # Projeyi derleyin
 cargo build --release

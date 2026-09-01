@@ -1,0 +1,89 @@
+{
+  "manifest_version": "0.3",
+  "name": "claude-code-setup",
+  "display_name": "Claude Code Setup",
+  "version": "0.1.0",
+  "description": "MCP management, semantic memory engine, and security auditing for Claude Code environment setup.",
+  "author": {
+    "name": "Ercan ER",
+    "url": "https://github.com/Ercaner1988"
+  },
+  "server": {
+    "type": "executable",
+    "command": "${__dirname}/claude-code-setup.exe",
+    "args": ["--mcp-mode"],
+    "mcp_config": {
+      "command": "${__dirname}/claude-code-setup.exe",
+      "args": ["--mcp-mode"]
+    }
+  },
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ercaner1988/claude-code-setup-rustified"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Ercaner1988/claude-code-setup-rustified",
+  "keywords": [
+    "mcp",
+    "claude-code",
+    "setup",
+    "memory",
+    "embeddings",
+    "security",
+    "configuration"
+  ],
+  "tools": [
+    {
+      "name": "mcp_list",
+      "description": "List all configured MCP servers (claude-code, project, claude-desktop targets)"
+    },
+    {
+      "name": "mcp_add",
+      "description": "Add a new MCP server with name, command, and optional arguments"
+    },
+    {
+      "name": "security_audit",
+      "description": "Scan for token leaks, permission issues, and security vulnerabilities. Optionally auto-remediate with --fix flag"
+    },
+    {
+      "name": "memory_note",
+      "description": "Add a semantic memory note with automatic embedding and knowledge graph linking"
+    },
+    {
+      "name": "memory_search",
+      "description": "Search semantic memory and knowledge base with cosine similarity matching"
+    },
+    {
+      "name": "status",
+      "description": "Real-time health check of Claude Code environment (git, python, node, mcp config)"
+    },
+    {
+      "name": "test",
+      "description": "Run comprehensive test suite for deployment verification"
+    }
+  ],
+  "privacy_policies": [
+    "https://github.com/Ercaner1988/claude-code-setup-rustified#privacy"
+  ],
+  "user_config": {
+    "home_dir": {
+      "type": "string",
+      "title": "Home Directory",
+      "description": "Custom home directory override for config file paths. Leave blank to use system $HOME",
+      "required": false
+    }
+  },
+  "long_description": "Claude Code Setup is a production-ready Rust CLI for managing MCP servers, semantic memory, and security compliance in your Claude Code environment. Features include: (1) Dynamic MCP management with support for three config targets (claude-code ~/.claude.json, project ./.mcp.json, claude-desktop); (2) Semantic memory engine with FastEmbed multilingual embeddings and automatic knowledge graph construction; (3) Security auditing with token scanning, permission enforcement, and pre-commit hook installation; (4) Real-time diagnostics and test suite for deployment verification.",
+  "documentation": "https://github.com/Ercaner1988/claude-code-setup-rustified/blob/main/README.md",
+  "support": "https://github.com/Ercaner1988/claude-code-setup-rustified/issues",
+  "tools_generated": false,
+  "compatibility": {
+    "claude_code": ">=1.0.0",
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ]
+  }
+}

@@ -6,6 +6,63 @@ Bu kılavuz, bilgisayarında **Rust veya teknik araçlar kurulu olmayan kullanı
 
 ---
 
+## 🚀 HIZLI BAŞLANGIÇ: Claude Code Extension
+
+### En Kolay Yol - Extension Installer
+
+#### Windows (PowerShell)
+```powershell
+powershell -ExecutionPolicy Bypass -File install-windows.ps1
+```
+
+#### macOS (Terminal)
+```bash
+bash install-macos.sh
+```
+
+**Yapacakları:**
+1. ✅ Latest release'i GitHub'dan indir
+2. ✅ Sisteme kur
+3. ✅ PATH'e ekle  
+4. ✅ Claude Code extension'ı register et
+5. ✅ MCP konfigürasyonu hazırla
+
+**Sonra:**
+1. Claude Code Desktop → Settings → Extensions
+2. "claude-code-setup" arayın
+3. Araçları configure et ve kullan
+
+---
+
+## 📥 Manual Extension Kurulumu (İsteğe Bağlı)
+
+Installerları kullanmak istemiyorsanız:
+
+1. **Claude Code Desktop aç** → Settings → Extensions
+
+2. **"Select extension"** → "Browse extensions folder"
+
+3. **Klasör seç:**
+   ```
+   C:\Users\{username}\AppData\Roaming\Claude\Claude Extensions
+   ```
+
+4. **Yeni klasör oluştur:** `ercaner1988.claude-code-setup`
+
+5. **Dosyaları indir ve kopyala:**
+   - [manifest.json](manifest.json) (repo'dan)
+   - [Release binary](https://github.com/Ercaner1988/claude-code-setup-rustified/releases) (.exe / macos / linux)
+   - [README.md](README.md)
+   - [LICENSE](LICENSE)
+
+6. **"Install unpacked extension"** tıkla → Klasörü seç
+
+7. **Claude Code'u restart et** (tamamen kapat & aç)
+
+8. **Settings → Extensions** → "claude-code-setup" kontrol et
+
+---
+
 ## 💡 ÖNEMLİ NOT: Rust Kurulu Olması Gerekir mi?
 
 - **HAYIR! Hazır İkili Dosya (.exe) Kullanıyorsanız Rust ŞART DEĞİLDİR:**

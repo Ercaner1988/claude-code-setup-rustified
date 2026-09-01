@@ -2,7 +2,57 @@
 
 This guide deploys the Rust CLI onto a fresh machine (Windows, Linux, or macOS).
 
-## Prerequisites
+## Quick Start: Claude Code Extension
+
+### Windows (Automatic)
+```powershell
+powershell -ExecutionPolicy Bypass -File install-windows.ps1
+```
+
+### macOS (Automatic)
+```bash
+bash install-macos.sh
+```
+
+These scripts handle:
+- ✅ Downloading latest release
+- ✅ Installing to system PATH
+- ✅ Registering as Claude Code Extension
+- ✅ Configuring MCP servers
+
+Then:
+1. Open Claude Code Desktop → Settings → Extensions
+2. Find "claude-code-setup" in the list
+3. Click "Configure" to see available tools
+
+---
+
+## Manual Extension Installation
+
+1. **Clone or download the repository**
+2. **Build release binary:**
+   ```bash
+   cargo build --release
+   ```
+3. **Create extension folder:**
+   ```
+   $APPDATA\Claude\Claude Extensions\ercaner1988.claude-code-setup
+   ```
+4. **Copy files:**
+   - `manifest.json` ← Deploy this
+   - `target/release/claude-code-setup.exe` (or the binary for your OS)
+   - `README.md`
+   - `LICENSE`
+5. **Register:**
+   - Claude Code Desktop → Settings → Extensions
+   - "Select extension" → "Browse extensions folder"
+   - Choose the `ercaner1988.claude-code-setup` folder
+   - Click "Install unpacked extension"
+6. **Restart** Claude Code Desktop
+
+---
+
+## Prerequisites (For Manual Build)
 
 | Tool | Windows | Linux / macOS |
 | :--- | :--- | :--- |
@@ -12,7 +62,7 @@ This guide deploys the Rust CLI onto a fresh machine (Windows, Linux, or macOS).
 
 `install` checks all of these and reports anything missing.
 
-## Deploy
+## Deploy from Source
 
 ```bash
 git clone https://github.com/Ercaner1988/claude-code-setup-rustified.git
