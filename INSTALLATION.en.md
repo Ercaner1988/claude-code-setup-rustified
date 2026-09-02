@@ -1,16 +1,18 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# Claude Code Standalone Installation Guide (100% Rust Engine)
+# Claude Code Standalone Installation Guide (Rust-Core Single Binary)
 
-This guide provides step-by-step instructions for installing and configuring **Claude Code Setup** (`claude-code-setup`), a **100% Rust-native** CLI management, security, and memory tool across different platforms.
+This guide provides step-by-step instructions for installing and configuring **Claude Code Setup** (`claude-code-setup`), a Rust-core CLI management, security, and memory tool across different platforms.
+
+> **Honesty note:** The binary you run is pure Rust and self-contained. The **installers in this guide are not Rust**: `install-windows.ps1` is a PowerShell script and `install-macos.sh` is a Bash script. Release packages are produced by `package-extension.py` (Python). GitHub language statistics: **90.5% Rust, 3.5% Shell, 3.2% Python, 2.8% PowerShell** (measured line ratio: 91.2% Rust, 8.8% PowerShell + Bash + Python).
 
 ---
 
 ## 🎯 1. Overview
 
-- **Single Binary:** Zero dependencies on Shell (`.sh`) or Python (`.py`) scripts.
+- **Single Binary Runtime:** Running the tool requires no Rust, Python, or Node installation. The installers themselves are PowerShell/Bash scripts, and the `.mcpb` packager is Python — those run around the tool, not inside it.
 - **Cross-Platform:** Native performance on Windows (x64), Linux (x64), and macOS (x64 / ARM64).
-- **Zero External Dependencies:** Install by downloading pre-compiled release binaries or building via `cargo` in seconds.
+- **Offline After First Run:** Semantic search downloads the embedding model and the ONNX Runtime binary from Hugging Face on first use, then works fully offline from the `$HOME/.claude/fastembed_cache` directory.
 
 ---
 

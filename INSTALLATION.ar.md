@@ -1,8 +1,10 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# دليل تثبيت Claude Code المستقل (محرك Rust بنسبة 100%)
+# دليل تثبيت Claude Code المستقل (نواة Rust بملف تنفيذي واحد)
 
-يقدم هذا الدليل تعليمات خطوة بخطوة لتثبيت وتكوين أداة سطر الأوامر **Claude Code Setup** (`claude-code-setup`) المبنية **بنسبة 100% بلغة Rust** عبر منصات التشغيل المختلفة.
+يقدم هذا الدليل تعليمات خطوة بخطوة لتثبيت وتكوين أداة سطر الأوامر **Claude Code Setup** (`claude-code-setup`) المبنية على نواة Rust عبر منصات التشغيل المختلفة.
+
+> **ملاحظة أمانة:** الملف التنفيذي الذي تشغّله مكتوب بلغة Rust خالصة وقائم بذاته. أمّا **أدوات التثبيت في هذا الدليل فليست بلغة Rust**: الملف `install-windows.ps1` نصٌّ برمجي بلغة PowerShell، والملف `install-macos.sh` نصٌّ برمجي بلغة Bash. كما تُنتَج حزم الإصدار بواسطة `package-extension.py` (بلغة Python). إحصاءات لغات GitHub: **%90.5 Rust، %3.5 Shell، %3.2 Python، %2.8 PowerShell** (نسبة الأسطر المقيسة: 91.2% Rust، و8.8% PowerShell + Bash + Python).
 
 ---
 

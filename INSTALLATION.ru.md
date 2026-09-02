@@ -1,8 +1,10 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# Руководство по Установке Claude Code (100% Rust Движок)
+# Руководство по Установке Claude Code (Ядро на Rust, единый бинарный файл)
 
-Данное руководство содержит пошаговые инструкции по установке и настройке **100% Rust-нативного** CLI-инструмента **Claude Code Setup** (`claude-code-setup`) для различных операционных систем.
+Данное руководство содержит пошаговые инструкции по установке и настройке CLI-инструмента **Claude Code Setup** (`claude-code-setup`) с ядром на Rust для различных операционных систем.
+
+> **Замечание о честности:** Запускаемый бинарный файл написан на чистом Rust и является самодостаточным. Однако **установщики в этом руководстве написаны не на Rust**: `install-windows.ps1` — это сценарий PowerShell, а `install-macos.sh` — сценарий Bash. Пакеты выпуска создаются с помощью `package-extension.py` (Python). Статистика языков GitHub: **90,5% Rust, 3,5% Shell, 3,2% Python, 2,8% PowerShell** (измеренное соотношение строк: 91,2% Rust, 8,8% PowerShell + Bash + Python).
 
 ---
 

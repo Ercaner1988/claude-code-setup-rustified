@@ -1,8 +1,10 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# Claude Code Bağımsız Kurulum Kılavuzu (%100 Rust Motoru)
+# Claude Code Bağımsız Kurulum Kılavuzu (Rust Çekirdekli Tek İkili)
 
 Bu kılavuz, bilgisayarında **Rust veya teknik araçlar kurulu olmayan kullanıcılar dahil** herkesin **Claude Code Setup** (`claude-code-setup`) aracını saniyeler içinde kurup çalıştırabilmesi için adım adım hazırlanmıştır.
+
+> **Dürüstlük notu:** Çalıştırılan ikili dosya saf Rust'tır ve kendi kendine yeterlidir. Ancak bu kılavuzdaki **kurucular Rust değildir**: `install-windows.ps1` bir PowerShell betiği, `install-macos.sh` bir Bash betiğidir. Sürüm paketleri de `package-extension.py` (Python) ile üretilir. GitHub dil istatistiği: **%90,5 Rust, %3,5 Shell, %3,2 Python, %2,8 PowerShell** (ölçülen satır payı: %91,2 Rust, %8,8 PowerShell + Bash + Python).
 
 ---
 
@@ -87,11 +89,18 @@ Installerları kullanmak istemiyorsanız:
 ## 💡 ÖNEMLİ NOT: Rust Kurulu Olması Gerekir mi?
 
 - **HAYIR! Hazır İkili Dosya (.exe) Kullanıyorsanız Rust ŞART DEĞİLDİR:**
-  - Bu araç **%100 bağımsız derlenmiş tek bir ikili dosyadır (Single Binary)**. 
-  - Bilgisayarınızda Rust, Python veya ek bir betik dili derleyicisi kurulu olmak **zorunda değildir**.
+  - Bu araç **bağımsız derlenmiş tek bir ikili dosyadır (Single Binary)**.
+  - Aracı **çalıştırmak** için bilgisayarınızda Rust, Python veya ek bir betik dili derleyicisi kurulu olmak **zorunda değildir**.
   - Doğrudan `.exe` indirip çalıştırabilirsiniz.
 
-- **YALNIZCA kaynak koddan kendiniz derlemek istiyorsanız** bilgisayarınızda Rust bulunmalıdır. (Aşağıda otomatik Rust kurulum adımı verilmiştir).
+- **YALNIZCA kaynak koddan kendiniz derlemek istiyorsanız** bilgisayarınızda Rust bulunmalıdır. (Aşağıda otomatik Rust kurulum adımı verilmiştir.)
+
+- **Betik bağımlılıkları nerede duruyor?** Aracın kendisinde değil, çevresinde:
+  - `install-windows.ps1` → Windows'ta PowerShell gerektirir (Windows'ta hazır gelir).
+  - `install-macos.sh` → macOS/Linux'ta Bash gerektirir (ikisinde de hazır gelir).
+  - `package-extension.py` → yalnız sürüm çıkarma sırasında (CI) Python gerektirir; son kullanıcıyı ilgilendirmez.
+  - `security-audit`/`install-hooks` komutlarının kurduğu Git pre-commit kancası bir **bash betiğidir**; Windows'ta Git for Windows'un bash'i ile çalışır.
+  - Semantik arama ilk kullanımda Hugging Face'ten gömme modelini ve ONNX Runtime ikilisini indirir; bundan sonrası çevrimdışıdır.
 
 ---
 
@@ -171,7 +180,7 @@ curl -LO https://github.com/Ercaner1988/claude-code-setup-rustified/releases/lat
 # Ortam tanılamasını çalıştırın
 claude-code-setup status
 
-# Tanı doğrulama testlerini коşturun
+# Tanı doğrulama testlerini koşturun
 claude-code-setup test
 ```
 

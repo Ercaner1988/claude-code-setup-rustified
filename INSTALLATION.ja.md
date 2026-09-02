@@ -1,8 +1,10 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# Claude Code スタンドアロンインストールガイド (100% Rust エンジン)
+# Claude Code スタンドアロンインストールガイド (Rust コア単一バイナリ)
 
-このガイドでは、**Claude Code** 環境を管理する **100% Rust ベース** のローカル CLI ツール (`claude-code-setup`) を各プラットフォームにインストールおよび設定する方法を解説します。
+このガイドでは、**Claude Code** 環境を管理する Rust コアのローカル CLI ツール (`claude-code-setup`) を各プラットフォームにインストールおよび設定する方法を解説します。
+
+> **誠実性に関する注記:** 実行されるバイナリは純粋な Rust であり、自己完結しています。しかし本ガイドの**インストーラーは Rust ではありません**。`install-windows.ps1` は PowerShell スクリプト、`install-macos.sh` は Bash スクリプトです。リリースパッケージは `package-extension.py` (Python) で生成されます。GitHub の言語統計: **Rust 90.5%, Shell 3.5%, Python 3.2%, PowerShell 2.8%** (計測された行数構成比: Rust 91.2%、PowerShell + Bash + Python 8.8%)。
 
 ---
 

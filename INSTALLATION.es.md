@@ -1,8 +1,10 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# Guía de Instalación Independiente de Claude Code (Motor 100% Rust)
+# Guía de Instalación Independiente de Claude Code (Núcleo Rust, binario único)
 
-Esta guía proporciona instrucciones paso a paso para instalar y configurar la herramienta CLI **Claude Code Setup** (`claude-code-setup`), **100% nativa en Rust**, en diferentes plataformas.
+Esta guía proporciona instrucciones paso a paso para instalar y configurar la herramienta CLI **Claude Code Setup** (`claude-code-setup`), con núcleo en Rust, en diferentes plataformas.
+
+> **Nota de honestidad:** El binario que se ejecuta está escrito en Rust puro y es autónomo. Sin embargo, **los instaladores de esta guía no son de Rust**: `install-windows.ps1` es un script de PowerShell e `install-macos.sh` es un script de Bash. Los paquetes de publicación se generan con `package-extension.py` (Python). Estadísticas de idiomas de GitHub: **90,5 % Rust, 3,5 % Shell, 3,2 % Python, 2,8 % PowerShell** (proporción medida en líneas: 91,2 % Rust y 8,8 % PowerShell + Bash + Python).
 
 ---
 

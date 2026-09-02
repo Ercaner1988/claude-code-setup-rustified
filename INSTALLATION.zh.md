@@ -1,8 +1,10 @@
 **🌍 [Türkçe](INSTALLATION.md) | [English](INSTALLATION.en.md) | [العربية](INSTALLATION.ar.md) | [日本語](INSTALLATION.ja.md) | [中文](INSTALLATION.zh.md) | [Русский](INSTALLATION.ru.md) | [Español](INSTALLATION.es.md)**
 
-# Claude Code 独立安装指南 (100% Rust 引擎)
+# Claude Code 独立安装指南 (Rust 内核单一二进制)
 
-本指南提供在不同平台上安装和配置 **100% Rust 原生** CLI 管理工具 **Claude Code Setup** (`claude-code-setup`) 的详细步骤。
+本指南提供在不同平台上安装和配置 Rust 内核 CLI 管理工具 **Claude Code Setup** (`claude-code-setup`) 的详细步骤。
+
+> **诚实说明：** 您运行的二进制文件是纯 Rust 编写且自成一体的。但本指南中的**安装脚本并非 Rust**：`install-windows.ps1` 是 PowerShell 脚本，`install-macos.sh` 是 Bash 脚本。发布包由 `package-extension.py` (Python) 生成。GitHub 语言统计：**Rust 90.5%、Shell 3.5%、Python 3.2%、PowerShell 2.8%**（实测行数构成：Rust 91.2%，PowerShell + Bash + Python 8.8%）。
 
 ---
 

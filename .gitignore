@@ -51,3 +51,6 @@ settings.local.json
 
 # graphify bilgi grafi ciktilari
 graphify-out/
+
+# Yerel ajan calisma notlari (kisisel yol icerir, yayinlanmaz)
+.hermes-notes/
