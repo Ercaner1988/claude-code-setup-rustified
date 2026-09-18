@@ -1,16 +1,7 @@
-mod agent;
-mod branch_manager;
-mod cli;
-mod installer;
-mod mcp;
-mod mcp_server;
-mod memory_engine;
-mod security;
-mod tester;
-
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
-use cli::{Cli, Commands};
+use claude_code_setup::cli::{Cli, Commands};
+use claude_code_setup::{agent, installer, mcp, mcp_server, memory_engine, security, tester};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();

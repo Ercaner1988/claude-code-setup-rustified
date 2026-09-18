@@ -43,7 +43,7 @@ pub fn run_mcp_mode() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn handle_request(req: &JsonRpcRequest) -> String {
+pub fn handle_request(req: &JsonRpcRequest) -> String {
     let response = match req.method.as_str() {
         "initialize" => initialize(&req.id),
         "tools/list" => list_tools(&req.id),
@@ -228,7 +228,7 @@ fn run_cli(args: &[String]) -> (String, bool) {
 }
 
 /// Arac cagrisini CLI argumanlarina cevirir.
-fn tool_to_cli_args(tool: &str, args: &serde_json::Value) -> Result<Vec<String>, String> {
+pub fn tool_to_cli_args(tool: &str, args: &serde_json::Value) -> Result<Vec<String>, String> {
     let text_of = |key: &str| {
         args.get(key)
             .and_then(|v| v.as_str())

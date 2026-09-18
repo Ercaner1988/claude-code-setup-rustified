@@ -7,6 +7,14 @@ description = "Bagimsiz Rust CLI: Claude Code ortam denetimi, dinamik MCP yoneti
 license = "MIT"
 repository = "https://github.com/Ercaner1988/claude-code-setup-rustified"
 
+[lib]
+name = "claude_code_setup"
+path = "src/lib.rs"
+
+[[bin]]
+name = "claude-code-setup"
+path = "src/main.rs"
+
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
 anyhow = "1.0"
@@ -21,4 +29,21 @@ tokio = { version = "1", features = ["full"] }
 uuid = { version = "1.6", features = ["v4", "serde"] }
 
 [dev-dependencies]
+divan = { version = "5.0.2", package = "codspeed-divan-compat" }
 tempfile = "3.8"
+
+[[bench]]
+name = "memory_engine"
+harness = false
+
+[[bench]]
+name = "memory_search"
+harness = false
+
+[[bench]]
+name = "security"
+harness = false
+
+[[bench]]
+name = "mcp_protocol"
+harness = false

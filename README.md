@@ -5,6 +5,7 @@
 [![Rust](https://img.shields.io/badge/Rust%20çekirdek-%2591-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-30%20Passed-green.svg)]()
+[![CodSpeed](https://img.shields.io/endpoint?url=https://codspeed.io/badge.json)](https://app.codspeed.io/Ercaner1988/claude-code-setup-rustified?utm_source=badge)
 
 **Claude Code** ortamını yönetmek için geliştirilmiş yerel dağıtım, güvenlik denetimi ve hafıza motoru (`claude-code-setup`). Çalışma zamanı tek bir Rust ikili dosyasıdır; kullanmak için makinede Rust, Python veya Node kurulu olması gerekmez.
 
