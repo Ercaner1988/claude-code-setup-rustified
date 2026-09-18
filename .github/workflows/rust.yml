@@ -37,5 +37,3 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
 
-      - name: Build release
-        run: cargo build --release --verbose

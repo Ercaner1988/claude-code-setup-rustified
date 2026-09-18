@@ -1,8 +1,13 @@
 name: Release
 
+# Her PR'da da calisir (kuru kosu): yayinlanacak artefakti ayni yoldan
+# derleyip paketler ve gercekten calistirir. Yukleme adimi yalnizca v*
+# etiketinde isler. Boylece bozuk bir paket etiketlenmeden yakalanir.
 on:
   push:
     tags: ["v*"]
+  pull_request:
+    branches: ["main"]
 
 permissions:
   contents: write
@@ -64,7 +69,16 @@ jobs:
       - name: Package Claude Desktop extension
         run: python package-extension.py ${{ matrix.asset }} ${{ matrix.mcpb }}
 
+      # Yayinlanacak paketi Claude Desktop'in yapacagi gibi ac ve calistir:
+      # isletim sisteminin kendi unzip'i (calistirma izni ancak boyle sinanir),
+      # MCP el sikismasi, arac listesi, salt-okunur bir aracin gercek cagrisi.
+      # macOS koşucusu ARM; x86_64 ikili burada yalnizca Rosetta ile calisir,
+      # bu adim o yuzden "Apple Silicon Mac'te calisiyor mu"nun da cevabi.
+      - name: Smoke test packaged extension
+        run: python smoke-test-extension.py ${{ matrix.mcpb }}
+
       - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |
