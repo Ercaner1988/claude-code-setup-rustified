@@ -29,9 +29,12 @@ jobs:
             target: x86_64-pc-windows-msvc
             asset: claude-code-setup-windows-x86_64.exe
             mcpb: claude-code-setup-windows.mcpb
+          # Universal ikili: x86_64 + arm64 tek dosyada (lipo). Yalnizca x86_64
+          # yayinlamak Apple Silicon'da Rosetta 2'yi sart kosuyordu; macOS
+          # Rosetta'yi varsayilan olarak kurmuyor.
           - os: macos-latest
-            target: x86_64-apple-darwin
-            asset: claude-code-setup-macos-x86_64
+            target: x86_64-apple-darwin,aarch64-apple-darwin
+            asset: claude-code-setup-macos-universal
             mcpb: claude-code-setup-macos.mcpb
     runs-on: ${{ matrix.os }}
 
@@ -53,10 +56,21 @@ jobs:
           python-version: "3.x"
 
       - name: Build release binary
+        if: runner.os != 'macOS'
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Stage asset (Unix)
-        if: runner.os != 'Windows'
+      - name: Build universal macOS binary
+        if: runner.os == 'macOS'
+        run: |
+          cargo build --release --target x86_64-apple-darwin
+          cargo build --release --target aarch64-apple-darwin
+          lipo -create -output ${{ matrix.asset }}             target/x86_64-apple-darwin/release/claude-code-setup             target/aarch64-apple-darwin/release/claude-code-setup
+          archs=$(lipo -archs ${{ matrix.asset }})
+          echo "dilimler: $archs"
+          [[ "$archs" == *x86_64* && "$archs" == *arm64* ]] || { echo "universal degil: $archs"; exit 1; }
+
+      - name: Stage asset (Linux)
+        if: runner.os == 'Linux'
         run: cp target/${{ matrix.target }}/release/claude-code-setup ${{ matrix.asset }}
 
       - name: Stage asset (Windows)
@@ -72,9 +86,16 @@ jobs:
       # Yayinlanacak paketi Claude Desktop'in yapacagi gibi ac ve calistir:
       # isletim sisteminin kendi unzip'i (calistirma izni ancak boyle sinanir),
       # MCP el sikismasi, arac listesi, salt-okunur bir aracin gercek cagrisi.
-      # macOS koşucusu ARM; x86_64 ikili burada yalnizca Rosetta ile calisir,
-      # bu adim o yuzden "Apple Silicon Mac'te calisiyor mu"nun da cevabi.
+      # macOS'ta bu varsayilan kosu universal ikilinin arm64 dilimini calistirir.
       - name: Smoke test packaged extension
+        run: python smoke-test-extension.py ${{ matrix.mcpb }}
+
+      # Varsayilan kosu ARM koşucuda arm64 dilimini calistirir. Intel Mac'lerin
+      # alacagi x86_64 dilimini de ayrica calistir (koşucuda Rosetta ile).
+      - name: Smoke test x86_64 slice
+        if: runner.os == 'macOS'
+        env:
+          SMOKE_ARCH: x86_64
         run: python smoke-test-extension.py ${{ matrix.mcpb }}
 
       - name: Upload to GitHub Release

@@ -12,6 +12,10 @@ Claude Desktop'in bir eklentiyi kurarken yaptigini taklit eder:
 3. MCP el sikismasini yapar, araclari listeler, salt-okunur bir araci
    gercekten cagirir.
 
+macOS'ta SMOKE_ARCH=x86_64 (veya arm64) verilirse ikili `arch -<mimari>`
+ile o dilimden calistirilir. Universal ikilinin iki diliminin de gercekten
+calistigi ancak boyle sinanir; varsayilan kosu yalnizca yerel dilimi calistirir.
+
 Sinirlari: Claude Desktop'in kendi aciciyi degil isletim sisteminin
 `unzip`ini kullanir; macOS Gatekeeper davranisini sinamaz (CI koşucusunda
 indirilen dosyaya karantina isareti konmaz).
@@ -82,9 +86,16 @@ def main() -> int:
             rpc(3, "tools/call", {"name": READ_ONLY_TOOL, "arguments": {}}),
         ]) + "\n"
 
+        launch = [str(command), *args]
+        arch = os.environ.get("SMOKE_ARCH", "").strip()
+        if arch:
+            if sys.platform != "darwin":
+                fail("SMOKE_ARCH yalnizca macOS'ta anlamli")
+            launch = ["arch", f"-{arch}", *launch]
+
         try:
             proc = subprocess.run(
-                [str(command), *args], input=requests, capture_output=True,
+                launch, input=requests, capture_output=True,
                 text=True, encoding="utf-8", errors="replace", timeout=120,
             )
         except OSError as err:
@@ -125,6 +136,7 @@ def main() -> int:
 
     print(f"GECTI: {package.name}")
     print(f"  platform : {manifest['compatibility']['platforms']}")
+    print(f"  dilim    : {arch or 'yerel'}")
     print(f"  sunucu   : {server['name']} {server['version']}")
     print(f"  araclar  : {len(served)} -> {', '.join(served)}")
     print(f"  {READ_ONLY_TOOL:9}: {text.strip().splitlines()[0]}")
