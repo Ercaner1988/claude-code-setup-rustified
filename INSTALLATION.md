@@ -156,7 +156,17 @@ Invoke-WebRequest -Uri "https://github.com/Ercaner1988/claude-code-setup-rustifi
 2. **Kurulum Komutunu Yapıştırın ve Çalıştırın:**
 
 ```bash
-curl -LO https://github.com/Ercaner1988/claude-code-setup-rustified/releases/latest/download/claude-code-setup-macos-x86_64 && chmod +x claude-code-setup-macos-x86_64 && ./claude-code-setup-macos-x86_64 install --hooks
+curl -fsSL https://raw.githubusercontent.com/Ercaner1988/claude-code-setup-rustified/main/install-macos.sh | bash
+```
+
+Kurucu Mac'inin Intel mi Apple Silicon mı olduğuna bakmaz, gerek de yok:
+indirdiği ikili ikisinde de yerel olarak çalışır (universal), Rosetta gerekmez.
+
+Güvenlik kancasını bir **git deposunun kök dizininde** kur — kanca depoya
+özeldir, ev dizininde çalıştırınca atlanır:
+
+```bash
+cd ~/depom && claude-code-setup install-hooks
 ```
 
 ---
