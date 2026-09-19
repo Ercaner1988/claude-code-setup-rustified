@@ -5,6 +5,7 @@
 [![Rust](https://img.shields.io/badge/Rust%20core-%2591-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-30%20Passed-green.svg)]()
+[![CodSpeed](https://img.shields.io/endpoint?url=https://codspeed.io/badge.json)](https://app.codspeed.io/Ercaner1988/claude-code-setup-rustified?utm_source=badge)
 
 A local deployment, security auditing, and memory engine (`claude-code-setup`) for managing the **Claude Code** environment. The runtime is a single Rust binary; running it requires no Rust, Python, or Node installation on the host machine.
 

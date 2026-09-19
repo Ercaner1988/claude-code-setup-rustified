@@ -58,7 +58,7 @@ pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
     }
 }
 
-fn bytes_to_f32_vec(bytes: &[u8]) -> Vec<f32> {
+pub fn bytes_to_f32_vec(bytes: &[u8]) -> Vec<f32> {
     bytes
         .as_chunks::<4>()
         .0
@@ -67,7 +67,7 @@ fn bytes_to_f32_vec(bytes: &[u8]) -> Vec<f32> {
         .collect()
 }
 
-fn f32_vec_to_bytes(vec: &[f32]) -> Vec<u8> {
+pub fn f32_vec_to_bytes(vec: &[f32]) -> Vec<u8> {
     let mut bytes = Vec::with_capacity(vec.len() * 4);
     for &val in vec {
         bytes.extend_from_slice(&val.to_le_bytes());
@@ -91,7 +91,7 @@ pub fn extract_wikilinks(content: &str) -> Vec<String> {
 }
 
 /// İçeriği ~chunk_size karakterlik pencerelere böl (satır sınırında)
-fn chunk_content(content: &str, chunk_size: usize) -> Vec<String> {
+pub fn chunk_content(content: &str, chunk_size: usize) -> Vec<String> {
     if content.len() <= chunk_size {
         return vec![content.to_string()];
     }
@@ -119,7 +119,7 @@ fn chunk_content(content: &str, chunk_size: usize) -> Vec<String> {
 }
 
 /// Chunk embedding'lerinin ortalamasını al (mean-pool)
-fn mean_pool_embeddings(embeddings: &[Vec<f32>]) -> Vec<f32> {
+pub fn mean_pool_embeddings(embeddings: &[Vec<f32>]) -> Vec<f32> {
     if embeddings.is_empty() {
         return Vec::new();
     }
@@ -138,7 +138,7 @@ fn mean_pool_embeddings(embeddings: &[Vec<f32>]) -> Vec<f32> {
 }
 
 /// FTS5 sorgusu için güvenli kaçırma: her sözcüğü çift tırnağa al
-fn escape_fts5_query(query: &str) -> String {
+pub fn escape_fts5_query(query: &str) -> String {
     query
         .split_whitespace()
         .map(|word| format!("\"{}\"", word))
