@@ -52,9 +52,12 @@ echo -e "${GREEN}   Found: $LATEST_TAG${NC}"
 # Pick the asset for THIS operating system. Bu betik hem macOS hem Linux icin
 # kullaniliyor; macOS ikilisini sabitlemek Linux'ta "cannot execute binary
 # file" hatasi veriyordu.
+# macOS: once universal ikili (Intel + Apple Silicon, Rosetta gerektirmez),
+# yoksa eski surumlerdeki x86_64 ikili. Geri dusus, universal'in henuz
+# yayinlanmadigi surumlerde kurucunun kirilmamasi icin.
 case "$(uname -s)" in
-    Darwin) ASSET_MARKER="macos-x86_64"; OS_LABEL="macOS" ;;
-    Linux)  ASSET_MARKER="linux-x86_64"; OS_LABEL="Linux" ;;
+    Darwin) ASSET_MARKERS="macos-universal macos-x86_64"; OS_LABEL="macOS" ;;
+    Linux)  ASSET_MARKERS="linux-x86_64"; OS_LABEL="Linux" ;;
     *)
         echo "Unsupported operating system: $(uname -s)"
         echo "Supported: macOS, Linux. On Windows use install-windows.ps1."
@@ -62,10 +65,14 @@ case "$(uname -s)" in
         ;;
 esac
 
-DOWNLOAD_URL=$(echo "$API_RESPONSE" | grep -o "\"browser_download_url\": *\"[^\"]*${ASSET_MARKER}[^\"]*" | head -1 | cut -d'"' -f4)
+DOWNLOAD_URL=""
+for ASSET_MARKER in $ASSET_MARKERS; do
+    DOWNLOAD_URL=$(echo "$API_RESPONSE" | grep -o "\"browser_download_url\": *\"[^\"]*${ASSET_MARKER}[^\"]*" | head -1 | cut -d'"' -f4)
+    [[ -n "$DOWNLOAD_URL" ]] && break
+done
 
 if [[ -z "$DOWNLOAD_URL" ]]; then
-    echo "${OS_LABEL} x64 binary not found in release"
+    echo "${OS_LABEL} binary not found in release (looked for: $ASSET_MARKERS)"
     exit 1
 fi
 
