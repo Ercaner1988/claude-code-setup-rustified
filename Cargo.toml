@@ -2,7 +2,7 @@
 name = "claude-code-setup"
 version = "0.1.7"
 edition = "2021"
-authors = ["Ercan ER <ercaner1988@gmail.com>", "Kassam <agent@hermes.local>"]
+authors = ["Ercan ER <ercaner1988@gmail.com>"]
 description = "Bagimsiz Rust CLI: Claude Code ortam denetimi, dinamik MCP yonetimi, semantik + graf hafiza motoru"
 license = "MIT"
 repository = "https://github.com/Ercaner1988/claude-code-setup-rustified"

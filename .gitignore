@@ -53,7 +53,6 @@ settings.local.json
 graphify-out/
 
 # Yerel ajan calisma notlari (kisisel yol icerir, yayinlanmaz)
-.hermes-notes/
 
 # graft's local graph cache — regenerable, not committed (run `graft build`).
 /graft/
